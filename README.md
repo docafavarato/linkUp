@@ -17,6 +17,10 @@
 - ## User login/register
   - When registering, the user information in inserted into the API. When trying to log in, the system verifies the credentials based on the provided email.
 
+    ![image](https://github.com/docafavarato/linkUp/assets/98183878/1fb3f1e0-6701-4673-9961-1b0685339598)
+    ![image](https://github.com/docafavarato/linkUp/assets/98183878/9255794a-4367-4ae0-a951-88a9dabbe24b)
+
+
 - ## User interactions
     - ### Posting
         - Users can create, edit and delete their posts.
