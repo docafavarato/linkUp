@@ -45,7 +45,11 @@
       `/profiles/660b286b83c1b05a6290c8f2`
       
       ![image](https://github.com/docafavarato/linkUp/assets/98183878/b65b18b9-246f-433e-94a5-35a253f67c24)
-          
+
+    - Users can edit all of their profile informations:
+
+      ![image](https://github.com/docafavarato/linkUp/assets/98183878/c7b909b3-ca61-4e49-8284-78f76024f549)
+
 # Post related
 - ## Post structure
     - A post contains an author, a creation date, a title, a body, a list of comments and a list of users who liked it. Users can show or hide the replies.
