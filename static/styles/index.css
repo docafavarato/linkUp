@@ -428,6 +428,20 @@ body {
     width: 100% !important;
 }
 
+.circle-img {
+    object-fit: cover;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+}
+
+.circle-img-big {
+    object-fit: cover;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+}
+
 .postFooter {
     display: flex;
     flex-direction: column;

@@ -7,7 +7,7 @@
         <div class="container containerProfile">
             <div class="profileItems" style="width: 100%; height: 100%;">
                 <div class="profileImageContainer">
-                    <img src="{% if not userProfile['imgUrl'] %}
+                    <img class="circle-img-big" src="{% if not userProfile['imgUrl'] %}
                                 https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                             {% else %}
                                 {{ userProfile['imgUrl']}}

@@ -57,7 +57,7 @@
                         postDiv.innerHTML = `
                         <div class="container containerPosts" id="${post.id}">
                     <div class="postHeader" style="margin-top: .5rem;">
-                        <img src="${post.author.imgUrl}" width="35" height="35" style="border-radius: 55rem;">
+                        <img class="circle-img" src="${post.author.imgUrl}" width="35" height="35" style="border-radius: 55rem;">
                         <span style="margin-left: .2rem;"><a
                                 href="" class="profileLink" id="profileLink${post.id}">${post.author.name}</a></span>
                         <span style="margin-left: .5rem;" class="dateAgo" data-bs-toggle="tooltip"
@@ -79,7 +79,7 @@
                         <div class="divisor"></div>
                         <div class="postFooterItems">
                             <div class="postFooterCommentInput">
-                                <img src="${post.author.imgUrl}" width="36" height="36"
+                                <img class="circle-img" src="${post.author.imgUrl}" width="36" height="36"
                                     style="border-radius: 55rem; margin-right: .5rem;">
                                 <form class="commentForm" method="post" id="commentForm-${post.id}" style="width: 100%; display: flex;" data-post-id="${post.id}" data-user-id="${post.author.id}">
                                     <input class="form-control mx-auto w-auto" name="triggerCommentBody"
@@ -157,7 +157,7 @@
                             <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                                 width="35" style="border-radius: 55rem;">
                             {% else %}
-                            <img src="{{ user['imgUrl']}}" width="35" height="35" style="border-radius: 55rem;">
+                            <img class="circle-img" src="{{ user['imgUrl']}}" width="35" height="35" style="border-radius: 55rem;">
                             {% endif %}
                             {{ user["name"] }}
                         </a>
@@ -201,7 +201,7 @@
                                 data-user-id="{{ user['id'] }}">
                                 <div class="mb-2" style="width: 100%;">
                                     <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="title"
-                                        name="title" placeholder="Title" type="text" maxlength="60">
+                                        name="title" placeholder="Title" type="text" maxlength="60" style="border-radius: .5rem;">
                                 </div>
                                 <div class="mb-3">
                                     <textarea class="form-control" placeholder="Body" name="body"></textarea>
@@ -222,7 +222,7 @@
                     <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                         width="35" height="35" style="border-radius: 55rem; margin-top: 1.1rem; margin-right: 1rem;">
                     {% else %}
-                    <img src="{{ user['imgUrl']}}" width="35" height="35"
+                    <img src="{{ user['imgUrl']}}" class="circle-img"
                         style="border-radius: 55rem; margin-top: 1.1rem; margin-right: 1rem;">
                     {% endif %}
                     <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="triggerPostModal"
@@ -283,7 +283,7 @@
                 {% endif %}
                 <div class="container containerPosts">
                     <div class="postHeader" style="margin-top: .5rem;">
-                        <img src="{% if not post['author']['imgUrl'] %}
+                        <img class="circle-img" src="{% if not post['author']['imgUrl'] %}
                                 https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                         {% else %}
                                 {{ post['author']['imgUrl']}}
@@ -316,7 +316,7 @@
                                 <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                                     width="36" height="36" style="border-radius: 55rem; margin-right: .5rem;">
                                 {% else %}
-                                <img src="{{ user['imgUrl']}}" width="36" height="36"
+                                <img class="circle-img" src="{{ user['imgUrl']}}" width="36" height="36"
                                     style="border-radius: 55rem; margin-right: .5rem;">
                                 {% endif %}
                                 <form class="commentForm" method="post" id="commentForm-{{ post['id'] }}"
@@ -368,7 +368,7 @@
                             <div class="postComment">
                                 <div class="postCommentHeader">
                                     <div class="postCommentAuthorInfo">
-                                        <img src="{% if not comment['author']['imgUrl'] %}
+                                        <img class="circle-img" src="{% if not comment['author']['imgUrl'] %}
                                         https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                                 {% else %}
                                         {{ comment['author']['imgUrl']}}

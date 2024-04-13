@@ -43,7 +43,7 @@
         {% endif %}
         <div class="container containerPosts" style="margin-top: 2rem;">
             <div class="postHeader" style="margin-top: .5rem;">
-                <img src="{% if not post['author']['imgUrl'] %}
+                <img class="circle-img" src="{% if not post['author']['imgUrl'] %}
                         https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                 {% else %}
                         {{ post['author']['imgUrl']}}
@@ -73,10 +73,10 @@
                 <div class="postFooterItems">
                     <div class="postFooterCommentInput">
                         {% if not user["imgUrl"] %}
-                        <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                        <img class="circle-img" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                             width="36" height="36" style="border-radius: 55rem; margin-right: .5rem;">
                         {% else %}
-                        <img src="{{ user['imgUrl']}}" width="36" height="36"
+                        <img class="circle-img" src="{{ user['imgUrl']}}" width="36" height="36"
                             style="border-radius: 55rem; margin-right: .5rem;">
                         {% endif %}
                         <form class="commentForm" method="post" id="commentForm-{{ post['id'] }}"
