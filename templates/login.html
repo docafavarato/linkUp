@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+<div class="container containerLogin">
+    <div class="formTitle" style="display: flex; flex-direction: column;">
+        <div class="desc" style="display: flex; flex-direction: column; align-items: center; justify-content: center; justify-items: center; margin-bottom: 1rem;">
+            <span id="editProfileText">Login</span>
+            <span id="editProfileDesc"><b>Insert your LinkUp account information.</b></span>
+        </div>
+        <form action="/login" method="post" id="loginForm">
+            <div class="mb-3">
+                <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="email" name="email" placeholder="E-mail" type="email">
+            </div>
+            <div class="mb-3">
+                <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password">
+            </div>
+            <button class="btn btn-primary" type="submit" id="loginButton"><b>Log In</b></button>
+            <div id="divisor"></div>
+            <a class="btn btn-success" href="{{ url_for('register') }}" id="register"><b>Register</b></a>
+        </form>
+    </div>
+    <div class="containerDesc">
+        <span id="linkup">Link up!</span>
+        <span id="linkupdesc"><b>Whether you're forging new friendships, expanding your professional network, or simply sharing life's moments, Link Up empowers you to effortlessly bridge connections with others who share your interests and passions.</b></span>
+    </div>
+</div>
+{% endblock %}

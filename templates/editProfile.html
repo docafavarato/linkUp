@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit profile
+{% endblock %}
+
+{% block main %}
+<div class="container containerEditProfile">
+    <div class="desc" style="display: flex; flex-direction: column; align-items: center; justify-content: center; justify-items: center; margin-bottom: 1rem;">
+        <span id="editProfileText">Edit profile</span>
+        <span id="editProfileDesc"><b>Be sure to write down your password somewhere!</b></span>
+    </div>
+    <form method="post" id="editProfileForm">
+        <div class="mb-3 form-floating">
+            <input type="text" class="form-control mx-auto w-auto" id="username" name="username" value="{{ user['name'] }}" type="text" placeholder="Name">
+            <label for="floatingInputValue">Name</label>
+        </div>
+        <div class="mb-3 form-floating">
+            <input class="form-control mx-auto w-auto" id="email" name="email" value="{{ user['email'] }}" type="email" placeholder="E-mail">
+            <label for="floatingInputValue">E-mail</label>
+        </div>
+        <div class="mb-3 form-floating">
+            <input class="form-control mx-auto w-auto" id="password" name="password" value="{{ user['password'] }}" type="password" placeholder="Password">
+            <label for="floatingInputValue">Password</label>
+        </div>
+        <div class="mb-3 form-floating">
+            <input class="form-control mx-auto w-auto" id="imgUrl" name="imgUrl" value="{{ user['imgUrl'] }}" type="text" placeholder="Image URL">
+            <label for="floatingInputValue">Image URL</label>
+        </div>
+        <div class="mb-3 form-floating">
+            <input class="form-control mx-auto w-auto" id="description" name="description" value="{{ user['description'] }}" type="text" placeholder="Description">
+            <label for="floatingInputValue">Description</label>
+        </div>
+        <div class="mb-3 form-floating">
+            <input class="form-control mx-auto w-auto" id="birthDateInput" name="birthDate" value="{{ user['birthDate'] }}" type="text" placeholder="Birth date" maxlength="10">
+            <label for="floatingInputValue">Birth date</label>
+        </div>
+        <button class="btn btn-primary" type="submit" style="margin-top: 1rem; max-width: 100%;" name="editProfile"><b>Save</b></button>
+    </form>
+</div>
+{% endblock %}

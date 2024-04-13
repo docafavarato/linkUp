@@ -1,0 +1,605 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+
+html {
+    width: 100%;
+}
+
+html::-webkit-scrollbar {
+    display: none;
+}
+
+nav {
+    max-width: 100wv;
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+}
+
+.navbar {
+    height: 4rem !important;
+    background-color: white !important;
+}
+
+body {
+    background-color: #F0F2F5;
+}
+
+.profile-dropdown {
+    background-color: inherit !important;
+}
+
+.profile-dropdown-button {
+    border-radius: 55rem !important;
+}
+
+.containerLogin {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+}
+
+.containerRegister {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+}
+
+.containerDesc {
+    margin-left: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    text-align: left;
+    max-width: 40rem;
+}
+
+#loginForm {
+    -webkit-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    background-color: white;
+    width: 25rem;
+    height: 20rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: .5rem;
+    max-width: 100%;
+}
+
+#registerForm {
+    -webkit-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    background-color: white;
+    width: 30rem;
+    height: 23rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: .5rem;
+    max-width: 100%;
+}
+
+.containerRegister .containerDesc {
+    margin-left: 0rem !important;
+    margin-right: 3rem;
+}
+
+#linkup {
+    font-size: 100px !important;
+    color: #0D6EFD;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+#linkupdesc {
+    display: block;
+    font-size: 16px !important;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.search-dropdown-button {
+    border-radius: 55rem;
+    background-color: #F0F2F5;
+    border: none;
+    width: 15rem !important;
+    height: 2.5rem !important;
+    max-width: 100%;
+}
+
+#loginForm input, #registerForm input, #editProfileForm input {
+    border-radius: 55rem;
+    background-color: #F0F2F5;
+    border: none;
+    width: 20rem !important;
+    height: 3rem !important;
+    max-width: 100%;
+}
+
+#loginForm button, #registerForm button, #editProfileForm button {
+    border-radius: 55rem;
+    width: 20rem;
+}
+
+#loginForm #register, #registerForm #login {
+    margin-top: 1rem;
+    border-radius: 55rem;
+    width: 15rem;
+}
+
+#loginForm #divisor, #registerForm #divisor {
+    margin-top: 1rem;
+    width: 20rem;
+    border-bottom: 0.1px solid #F0F2F5 !important;
+    max-width: 100%;
+}
+
+#linkupRegister {
+    font-size: 100px !important;
+    color: #0D6EFD;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+#linkupdescRegister {
+    display: block;
+    font-size: 16px !important;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.containerEditProfile {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.containerEditProfile input {
+    max-width: 100%;
+}
+
+.containerEditProfile .mb-3 {
+    max-width: 100%;
+}
+
+.containerPost .mb-3 {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#editProfileForm{
+    -webkit-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    background-color: white;
+    width: 32rem;
+    min-height: 34rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: .5rem;
+    max-width: 100%;
+}
+
+.form-floating::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: red !important;
+    opacity: 1; /* Firefox */
+}
+
+#editProfileText {
+    font-size: 40px !important;
+    color: #0D6EFD;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+#profilesMatchingText {
+    font-size: 30px !important;
+    color: #0D6EFD;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+#postsMatchingText {
+    font-size: 30px !important;
+    color: #0D6EFD;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+@media screen and (max-width: 1200px) {
+    .containerDesc {
+        display: none;
+    }
+}
+
+.containerPost {
+    -webkit-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    background-color: white;
+    width: 40rem;
+    height: 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: .5rem;
+    max-width: 100%;
+    margin-bottom: 5rem;
+    margin-top: 2rem;
+    align-items: flex-start;
+    overflow: hidden;
+}
+
+#triggerPostModal {
+    margin-top: 1rem;
+    border-radius: 55rem;
+    background-color: #F0F2F5;
+    border: none;
+    width: 35rem !important;
+    height: 2.5rem !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    max-width: 100% !important;
+}
+
+.postModal {
+    max-width: 100%;
+}
+
+.postModal .modal-header, .commentModal .modal-header {
+    cursor: grab;
+}
+
+.postModal .modal-header:active, .commentModal .modal-header:active {
+    cursor: grabbing;
+}
+
+.postModal form input {
+    border-radius: 55rem;
+    background-color: #F0F2F5;
+    border: none;
+    width: 100% !important;
+    height: 3rem !important;
+    max-width: 100%;
+}
+
+.postModal form {
+    width: 100%;
+}
+
+.postModal form textarea {
+    height: 10rem;
+    margin-top: 1rem;
+    background-color: #F0F2F5;
+    max-height: 25rem;
+    width: 100%;
+}
+
+.postModal .modal-footer button {
+    width: 100% !important;
+}
+
+.containerPosts {
+    -webkit-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    background-color: white;
+    border-radius: .5rem;
+    width: 40rem;
+    align-items: center;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 8rem;
+    max-width: 100%;
+}
+
+.postHeader {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.postHeaderItems {
+    margin-left: auto !important;
+}
+
+.postHeaderItems #editPost {
+    margin-right: .5rem !important;
+}
+
+.postBody {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.postTitle {
+    font-size: 20px;
+}
+
+.postBodyText {
+    text-align: left;
+    word-break: break-all;
+}
+
+.containerPosts .divisor {
+    margin-top: 1rem;
+    width: 38rem;
+    border-bottom: 0.1px solid #F0F2F5 !important;
+    max-width: 100%;
+}
+
+.profileLink {
+    text-decoration: none;
+}
+
+.profileLink::hover {
+        text-decoration: underline !important;
+}
+
+.containerProfile {
+    -webkit-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
+    margin-top: 2rem;
+    background-color: #ffffff !important;
+    border-radius: .5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 40rem;
+    min-height: 8rem;
+    max-width: 100%;
+}
+
+.profileItems {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.profileFollowInfo {
+    width: 100%;
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+}
+
+.followInfo {
+    display: flex;
+    flex-direction: row;
+}
+
+.profileDesc {
+    width: 100%;
+}
+
+.profileName {
+    font-size: 24px;
+}
+
+.profileTexts {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.profileDescText {
+    word-break: break-all !important;
+}
+
+#postForm {
+    display: flex;
+    flex-direction: column !important;
+}
+
+#postForm .mb-3 {
+    width: 100% !important;
+}
+
+.postFooter {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.postComments {
+    margin-top: .5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.postComment {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: .5rem;
+    background-color: #F0F2F5;
+    border-radius: .5rem;
+    min-height: 4rem;
+}
+
+.postCommentBody {
+    margin-left: 2rem;
+}
+
+.postCommentContent {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    align-self: flex-start;
+    text-align: left;
+}
+
+.postCommentHeader {
+    width: 100%;
+    margin-top: .2rem;
+    margin-left: .2rem;
+    display: flex;
+    flex-direction: row;
+}
+
+.postFooterItems {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.postFooterItems i {
+    color: #0D6EFD;
+}
+
+.postFooterItems i:hover {
+    color: #0A58CA;
+}
+
+.postFooterReplies {
+    margin-top: .5rem;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.postFooterCommentInput {
+    width: 100%;
+    margin-top: .5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.postFooterCommentInput input {
+    border-radius: 55rem !important;
+    border: none !important;
+    align-self: flex-start;
+    background-color: #F0F2F5;
+    width: 100% !important;
+}
+
+.postCommentItems {
+    margin-right: .8rem;
+    margin-left: auto;
+}
+
+#deleteComment {
+    font-size: 14px !important;
+}
+
+.profileTexts {
+    width: 100%;
+    max-width: 100%;
+}
+
+.profileDesc {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.profileDescText {
+    max-width: 100%;
+}
+
+.dateAgo {
+    font-size: small;
+    user-select: none;
+}
+
+.likeAmount {
+    user-select: none;
+}
+
+#followBtn {
+    width: 95px;
+}
+
+#followBtn::after {
+    content: "Following";
+}
+
+#followBtn:hover::after {
+    content: "Unfollow";
+}
+
+#followBtn:hover {
+    background-color: #ffffff !important;
+    color: #0D6EFD !important;
+}
+
+#fileInput {
+    width: 100% !important;
+    border-radius: .5rem !important;
+}
+
+.navbar-nav {
+    height: 100%
+}
+
+.navbar-nav a::after {
+    content: "";
+    background-color: #0D6EFD;
+    height: 3px;
+    width: 0;
+    margin: auto;
+    display: block;
+    border-radius: 10px;
+    transition: 0.3s ease-in-out;
+}
+
+.navbar-nav {
+    user-select: none !important;
+}
+
+.navbar-nav a:hover::after,
+.navbar-nav a.current::after {
+    width: 100%;
+    transition: width 0.2s linear;
+}
+
+.navbar-nav a {
+    text-decoration: none;
+    color: grey;
+}
+
+.sourceDivisor {
+    height: 22px;
+    width: 1px;
+    color: black;
+    background-color: black;
+}
