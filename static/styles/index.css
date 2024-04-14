@@ -281,7 +281,6 @@ body {
 }
 
 .postModal form input {
-    border-radius: 55rem;
     background-color: #F0F2F5;
     border: none;
     width: 100% !important;
@@ -462,6 +461,19 @@ body {
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
+}
+
+.postCommentHeader, .postCommentItems, .postCommentContent {
+    margin-left: 0.3rem !important;
+}
+
+#postImageFileButton {
+    border: 1px dashed grey !important;
+    background-color: #F0F2F5 !important;
+    border-radius: .5rem;
+    min-width: 100% !important;
+    height: 5rem !important;
+    cursor: pointer !important;
 }
 
 .postComment {

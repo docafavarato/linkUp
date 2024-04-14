@@ -17,6 +17,7 @@ app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["UPLOAD_FOLDER"] = "static/uploads/user-images"
+app.config["POST_IMAGE_UPLOAD_FOLDER"] = "static/uploads/post-images"
 Session(app)
 
 def allowed_file(filename):
@@ -62,6 +63,14 @@ def index(source):
     
     return render_template("layout.html", user=user, posts=posts)
     
+
+@app.route("/handle-post-image", methods=["POST"])
+def handle_post_image():
+    imgFile = request.files["postImageFile"]
+    finalName = request.form.get("finalName")
+    if allowed_file(imgFile.filename):
+                imgFile.save(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], finalName))
+    return imgFile.filename + "saved"
 
 @app.route("/searchUsers?name=<query>", methods=["GET", "POST"])
 @login_required
@@ -116,7 +125,8 @@ def get_posts():
     data = request.json
     title = data.get("title")
     body = data.get("body")
-    req = requests.post(POSTS_URL + f"/insert?userId={session['user_id']}", json={"title": title, "body": body})
+    imgUrl = data.get("imgUrl")
+    req = requests.post(POSTS_URL + f"/insert?userId={session['user_id']}", json={"title": title, "body": body, "imgUrl": imgUrl})
 
     post = requests.get(USERS_URL + f"{session['user_id']}/posts?orderByDate=false").json()[0]
  
