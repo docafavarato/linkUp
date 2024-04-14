@@ -2,17 +2,25 @@ from flask import Flask, url_for, render_template, redirect, session, request, j
 from flask_session import Session
 from helpers import login_required
 from datetime import datetime
+from werkzeug.utils import secure_filename
 import requests
+import os
 
 USERS_URL = "http://localhost:8080/users/"
 POSTS_URL = "http://localhost:8080/posts"
 COMMENTS_URL = "http://localhost:8080/comments"
 
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
+
 app = Flask(__name__)
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+app.config["UPLOAD_FOLDER"] = "static/uploads/user-images"
 Session(app)
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route("/")
 @login_required
@@ -176,13 +184,18 @@ def editProfile():
             username = request.form.get("username")
             email = request.form.get("email")
             password = request.form.get("password")
-            imgUrl = request.form.get("imgUrl")
+            imgUrl = request.files["file"].filename
             description = request.form.get("description")
             birthDate = request.form.get("birthDate")
+            imgFile = request.files["file"]
+
+            if allowed_file(imgUrl):
+                filename = session["user_id"] + "." + imgFile.filename.split(".")[1]
+                imgFile.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
             requests.put(USERS_URL + session["user_id"], 
                         json={"name": username, "email": email, 
-                            "password": password, "imgUrl": imgUrl,
+                            "password": password, "imgUrl": filename,
                             "description": description, "birthDate": birthDate})
             return redirect(url_for("index", source="all"))
 

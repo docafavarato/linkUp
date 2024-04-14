@@ -10,7 +10,7 @@
                     <img class="circle-img-big" src="{% if not userProfile['imgUrl'] %}
                                 https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                             {% else %}
-                                {{ userProfile['imgUrl']}}
+                                {{ url_for('static', filename='uploads/user-images/' + userProfile['imgUrl']) }}
                             {% endif %}" width="100" height="100"
                         style="border-radius: 55rem; margin-top: 1.1rem; margin-right: 1rem;">
                 </div>

@@ -46,7 +46,7 @@
                 <img class="circle-img" src="{% if not post['author']['imgUrl'] %}
                         https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                 {% else %}
-                        {{ post['author']['imgUrl']}}
+                        {{ url_for('static', filename='uploads/user-images/' + post['author']['imgUrl']) }}
                 {% endif %}" width="35" height="35" style="border-radius: 55rem;">
                 <span style="margin-left: .2rem;"><a
                         href="{{ url_for('viewProfile', userId=post['author']['id']) }}" class="profileLink">{{
@@ -76,7 +76,7 @@
                         <img class="circle-img" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                             width="36" height="36" style="border-radius: 55rem; margin-right: .5rem;">
                         {% else %}
-                        <img class="circle-img" src="{{ user['imgUrl']}}" width="36" height="36"
+                        <img class="circle-img" src="{{ url_for('static', filename='uploads/user-images/' + user['imgUrl']) }}" width="36" height="36"
                             style="border-radius: 55rem; margin-right: .5rem;">
                         {% endif %}
                         <form class="commentForm" method="post" id="commentForm-{{ post['id'] }}"
@@ -131,8 +131,8 @@
                                 <img src="{% if not comment['author']['imgUrl'] %}
                                 https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                         {% else %}
-                                {{ comment['author']['imgUrl']}}
-                        {% endif %}" width="25" height="25" style="border-radius: 55rem;">
+                                {{ url_for('static', filename='uploads/user-images/' + comment['author']['imgUrl']) }}
+                        {% endif %}" class="circle-img-small" width="25" height="25" style="border-radius: 55rem;">
                                 <span class="postCommentAuthorName"><a
                                         href="{{ url_for('viewProfile', userId=comment['author']['id']) }}"
                                         class="profileLink">{{ comment['author']['name'] }}</a></span>

@@ -137,7 +137,7 @@ body {
 #loginForm #register, #registerForm #login {
     margin-top: 1rem;
     border-radius: 55rem;
-    width: 15rem;
+    width: 20rem;
 }
 
 #loginForm #divisor, #registerForm #divisor {
@@ -428,11 +428,18 @@ body {
     width: 100% !important;
 }
 
-.circle-img {
+.circle-img-small {
     object-fit: cover;
     border-radius: 50%;
-    width: 35px;
-    height: 35px;
+    width: 25px;
+    height: 25px;
+}
+
+.circle-img {
+    object-fit: cover !important;
+    border-radius: 50% !important;
+    width: 35px !important;
+    height: 35px !important;
 }
 
 .circle-img-big {

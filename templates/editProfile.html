@@ -10,7 +10,7 @@
         <span id="editProfileText">Edit profile</span>
         <span id="editProfileDesc"><b>Be sure to write down your password somewhere!</b></span>
     </div>
-    <form method="post" id="editProfileForm">
+    <form method="post" id="editProfileForm" enctype="multipart/form-data">
         <div class="mb-3 form-floating">
             <input type="text" class="form-control mx-auto w-auto" id="username" name="username" value="{{ user['name'] }}" type="text" placeholder="Name">
             <label for="floatingInputValue">Name</label>
@@ -24,8 +24,8 @@
             <label for="floatingInputValue">Password</label>
         </div>
         <div class="mb-3 form-floating">
-            <input class="form-control mx-auto w-auto" id="imgUrl" name="imgUrl" value="{{ user['imgUrl'] }}" type="text" placeholder="Image URL">
-            <label for="floatingInputValue">Image URL</label>
+            <input class="form-control mx-auto w-auto" name="file" type="file">
+            <label for="floatingInputValue">Image</label>
         </div>
         <div class="mb-3 form-floating">
             <input class="form-control mx-auto w-auto" id="description" name="description" value="{{ user['description'] }}" type="text" placeholder="Description">

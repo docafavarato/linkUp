@@ -57,7 +57,7 @@
                         postDiv.innerHTML = `
                         <div class="container containerPosts" id="${post.id}">
                     <div class="postHeader" style="margin-top: .5rem;">
-                        <img class="circle-img" src="${post.author.imgUrl}" width="35" height="35" style="border-radius: 55rem;">
+                        <img class="circle-img" src="{{ url_for('static', filename='uploads/user-images/${post.author.imgUrl}') }}" width="35" height="35" style="border-radius: 55rem;">
                         <span style="margin-left: .2rem;"><a
                                 href="" class="profileLink" id="profileLink${post.id}">${post.author.name}</a></span>
                         <span style="margin-left: .5rem;" class="dateAgo" data-bs-toggle="tooltip"
@@ -157,7 +157,7 @@
                             <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                                 width="35" style="border-radius: 55rem;">
                             {% else %}
-                            <img class="circle-img" src="{{ user['imgUrl']}}" width="35" height="35" style="border-radius: 55rem;">
+                            <img class="circle-img" src="{{ url_for('static', filename='uploads/user-images/' + user['imgUrl']) }}" width="35" height="35" style="border-radius: 55rem;">
                             {% endif %}
                             {{ user["name"] }}
                         </a>
@@ -222,7 +222,7 @@
                     <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                         width="35" height="35" style="border-radius: 55rem; margin-top: 1.1rem; margin-right: 1rem;">
                     {% else %}
-                    <img src="{{ user['imgUrl']}}" class="circle-img"
+                    <img src="{{ url_for('static', filename='uploads/user-images/' + user['imgUrl']) }}" class="circle-img"
                         style="border-radius: 55rem; margin-top: 1.1rem; margin-right: 1rem;">
                     {% endif %}
                     <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="triggerPostModal"
@@ -286,7 +286,7 @@
                         <img class="circle-img" src="{% if not post['author']['imgUrl'] %}
                                 https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                         {% else %}
-                                {{ post['author']['imgUrl']}}
+                            {{ url_for('static', filename='uploads/user-images/' + post['author']['imgUrl']) }}
                         {% endif %}" width="35" height="35" style="border-radius: 55rem;">
                         <span style="margin-left: .2rem;"><a
                                 href="{{ url_for('viewProfile', userId=post['author']['id']) }}" class="profileLink">{{
@@ -316,7 +316,7 @@
                                 <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                                     width="36" height="36" style="border-radius: 55rem; margin-right: .5rem;">
                                 {% else %}
-                                <img class="circle-img" src="{{ user['imgUrl']}}" width="36" height="36"
+                                <img class="circle-img" src="{{ url_for('static', filename='uploads/user-images/' + user['imgUrl']) }}" width="36" height="36"
                                     style="border-radius: 55rem; margin-right: .5rem;">
                                 {% endif %}
                                 <form class="commentForm" method="post" id="commentForm-{{ post['id'] }}"
@@ -368,10 +368,10 @@
                             <div class="postComment">
                                 <div class="postCommentHeader">
                                     <div class="postCommentAuthorInfo">
-                                        <img class="circle-img" src="{% if not comment['author']['imgUrl'] %}
+                                        <img class="circle-img-small" src="{% if not comment['author']['imgUrl'] %}
                                         https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                                 {% else %}
-                                        {{ comment['author']['imgUrl']}}
+                                    {{ url_for('static', filename='uploads/user-images/' + comment['author']['imgUrl']) }}
                                 {% endif %}" width="25" height="25" style="border-radius: 55rem;">
                                         <span class="postCommentAuthorName"><a
                                                 href="{{ url_for('viewProfile', userId=comment['author']['id']) }}"
