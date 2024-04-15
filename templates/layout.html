@@ -40,94 +40,6 @@
             Math.seed = timestamp;
             return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
         }
-
-        $(document).ready(function () {
-            $(".publishButton").on("click", function (ev) {
-                ev.preventDefault();
-                var user_id = $(this).attr("user_id");
-                var title = $("#postForm input[name='title']").val();
-                var body = $("#postForm textarea[name='body']").val();
-
-                var img = $("#postForm input[type='file']")[0].files[0];
-
-                var imgData = new FormData()
-                if (img) {
-                    var finalName = fuckingRandomNumber(img.name) + "." + img.name.split(".")[1];
-                    imgData.append("postImageFile", img);
-                    imgData.append("finalName", finalName)
-                }
-            
-                if (checkEmpty(title, body)) {
-
-                    if (img != null) {
-                        fetch("{{ url_for('handle_post_image') }}", {
-                            method: "POST",
-                            body: imgData
-                        });
-                    }
-
-                    req = $.ajax({
-                        url: "{{ url_for('get_posts') }}",
-                        type: "POST",
-                        data: JSON.stringify({ title: title, body: body, imgUrl: finalName }),
-                        headers: { 'Content-Type': 'application/json' }
-                    })
-
-                    req.done(function (post) {
-                        var parent = document.querySelector("#allPosts");
-
-                        var postDiv = document.createElement("div");
-
-                        postDiv.innerHTML = `
-                        <div class="container containerPosts" id="${post.id}">
-                    <div class="postHeader" style="margin-top: .5rem;">
-                        <img class="circle-img" src="{{ url_for('static', filename='uploads/user-images/${post.author.imgUrl}') }}" width="35" height="35" style="border-radius: 55rem;">
-                        <span style="margin-left: .2rem;"><a
-                                href="" class="profileLink" id="profileLink${post.id}">${post.author.name}</a></span>
-                        <span style="margin-left: .5rem;" class="dateAgo" data-bs-toggle="tooltip"
-                            data-bs-placement="top" data-bs-title="${post.date}">${post.date}</span>
-                        <a href="{{ url_for('index', source='all') }}" style="margin-left: .5rem;">Refresh to perform actions</a>
-
-                        <div class="postHeaderItems">
-                            <a data-bs-toggle="modal" data-bs-target="#editPost-${post.id}" href="{{ url_for('index', source='all') }}"
-                                id="editPost"><i class="fa-solid fa-pen-to-square"></i></a>
-                            <a href="{{ url_for('index', source='all') }}"
-                                id="deletePost"><i class="fa-solid fa-trash"></i></a>
-                        </div>
-                    </div>
-                    <div class="postBody">
-                        <span class="postTitle"><b>${post.title}</b></span>
-                        <span class="postBodyText">${post.body}</span>
-                    </div>
-                    <div class="postFooter">
-                        <div class="divisor"></div>
-                        <div class="postFooterItems">
-                            <div class="postFooterCommentInput">
-                                <img class="circle-img" src="${post.author.imgUrl}" width="36" height="36"
-                                    style="border-radius: 55rem; margin-right: .5rem;">
-                                <form class="commentForm" method="post" id="commentForm-${post.id}" style="width: 100%; display: flex;" data-post-id="${post.id}" data-user-id="${post.author.id}">
-                                    <input class="form-control mx-auto w-auto" name="triggerCommentBody"
-                                        placeholder="Comment something">
-                                    <button type="submit"
-                                        style="border: none; background-color: inherit; margin-left: .5rem;"><i
-                                            class="fa-solid fa-paper-plane"
-                                            id="submit-commentForm-${post.id}"></i></button>
-                                </form>
-                            </div>
-                            <div class="postFooterReplies">
-                                <a href="{{ url_for('index', source='all') }}"
-                                    style="margin-right: .5rem;"><i class="fa-regular fa-thumbs-up"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>`
-                        parent.prepend(postDiv);
-                        $("#" + post.id).fadeOut(0.1).fadeIn(600);
-                    })
-                }
-            })
-        })
     </script>
     <div class="main">
         <nav class="bg-light border navbar navbar-expand-md navbar-light fixed-top">
@@ -139,41 +51,45 @@
                     class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                    {% if session["user_id"] %}
-                    <div class="collapse navbar-collapse" id="navbar">
-                        <div class="dropdown search-dropdown d-flex">
-                            <form id="searchForm" name="searchForm" method="post" style="display: flex; flex-direction: row; align-items: center;">
-                                <input autocomplete="off" class="form-control mx-auto w-auto dropdown-toggle search-dropdown-button"
-                                        data-bs-toggle="dropdown" id="searchQuery" name="searchQuery" placeholder="Search" type="text">
-                                <button type="submit" name="searchForm" form="searchForm" style="margin-left: .5rem; background-color: #F0F2F5; height: 2.5rem; border: none; border-radius: 100rem; width: 2.5rem;">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                </button>
-                                <ul class="dropdown-menu" style="width: 85% !important;">
-                                    <li style="margin-left: 1rem;">
-                                        <label>Search for:</label>
-                                    </li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li style="margin-left: 1rem;">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="flexRadioDefault"
-                                                    id="flexRadioDefault1" value="users" checked>
-                                                <label class="form-check-label" for="flexRadioDefault1">
-                                                    Users
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="flexRadioDefault"
-                                                    id="flexRadioDefault2" value="posts">
-                                                <label class="form-check-label" for="flexRadioDefault2">
-                                                    Posts
-                                                </label>
-                                            </div>
-                                    </li>
-                                </ul>
-                            </form>
-                        </div>
+                {% if session["user_id"] %}
+                <div class="collapse navbar-collapse" id="navbar">
+                    <div class="dropdown search-dropdown d-flex">
+                        <form id="searchForm" name="searchForm" method="post"
+                            style="display: flex; flex-direction: row; align-items: center;">
+                            <input autocomplete="off"
+                                class="form-control mx-auto w-auto dropdown-toggle search-dropdown-button"
+                                data-bs-toggle="dropdown" id="searchQuery" name="searchQuery" placeholder="Search"
+                                type="text">
+                            <button type="submit" name="searchForm" form="searchForm"
+                                style="margin-left: .5rem; background-color: #F0F2F5; height: 2.5rem; border: none; border-radius: 100rem; width: 2.5rem;">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                            <ul class="dropdown-menu" style="width: 85% !important;">
+                                <li style="margin-left: 1rem;">
+                                    <label>Search for:</label>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li style="margin-left: 1rem;">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                            id="flexRadioDefault1" value="users" checked>
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Users
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                            id="flexRadioDefault2" value="posts">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Posts
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </form>
+                    </div>
                     <div class="dropdown profile-dropdown d-flex ms-auto">
                         <a class="btn btn-outline-primary dropdown-toggle profile-dropdown-button" href="#"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -181,7 +97,9 @@
                             <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                                 width="35" style="border-radius: 55rem;">
                             {% else %}
-                            <img class="circle-img" src="{{ url_for('static', filename='uploads/user-images/' + user['imgUrl']) }}" width="35" height="35" style="border-radius: 55rem;">
+                            <img class="circle-img"
+                                src="{{ url_for('static', filename='uploads/user-images/' + user['imgUrl']) }}"
+                                width="35" height="35" style="border-radius: 55rem;">
                             {% endif %}
                             {{ user["name"] }}
                         </a>
@@ -222,26 +140,32 @@
                         <div class="modal-body">
                             <form method="post" id="postForm"
                                 style="display: flex; flex-direction: row; align-items: center; justify-content: center;"
-                                data-user-id="{{ user['id'] }}">
+                                data-user-id="{{ user['id'] }}" hx-post="{{ url_for('create_post') }}"
+                                hx-target="#allPosts" hx-trigger="submit" hx-encoding='multipart/form-data'>
                                 <div class="mb-2" style="width: 100%;">
                                     <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="title"
-                                        name="title" placeholder="Title" type="text" maxlength="60" style="border-radius: .5rem;">
+                                        name="title" placeholder="Title" type="text" maxlength="60"
+                                        style="border-radius: .5rem;">
                                 </div>
                                 <div class="mb-3">
                                     <textarea class="form-control" placeholder="Body" name="body"></textarea>
                                 </div>
-                                <div class="mb-3" style="display: flex; flex-direction: column; align-items: flex-start;">
-                                    <button type="button" class="form-control mx-auto w-auto" placeholder="Select an image" id="postImageFileButton" onclick="handlePostImageInput();">
+                                <div class="mb-3"
+                                    style="display: flex; flex-direction: column; align-items: flex-start;">
+                                    <button type="button" class="form-control mx-auto w-auto"
+                                        placeholder="Select an image" id="postImageFileButton"
+                                        onclick="handlePostImageInput();">
                                         <i class="fa-solid fa-cloud-arrow-up"></i>
                                         Select or drop an image
                                     </button>
-                                    <input class="form-control" type="file" id="postImageFile" name="postImageFile" style="display: none;" accept="image/png, image/jpg, image/jpeg">
+                                    <input class="form-control" type="file" id="postImageFile" name="postImageFile"
+                                        style="display: none;" accept="image/png, image/jpg, image/jpeg">
                                 </div>
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn-primary publishButton" data-bs-dismiss="modal" name="postForm"
-                                id="publishButton" user_id="{{ user['id'] }}">Publish</button>
+                            <button class="btn btn-primary publishButton" data-bs-dismiss="modal" id="publishButton"
+                                user_id="{{ user['id'] }}" type="submit" form="postForm">Publish</button>
                         </div>
                     </div>
                 </div>
@@ -253,8 +177,8 @@
                     <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                         width="35" height="35" style="border-radius: 55rem; margin-top: 1.1rem; margin-right: 1rem;">
                     {% else %}
-                    <img src="{{ url_for('static', filename='uploads/user-images/' + user['imgUrl']) }}" class="circle-img"
-                        style="border-radius: 55rem; margin-top: 1.1rem; margin-right: 1rem;">
+                    <img src="{{ url_for('static', filename='uploads/user-images/' + user['imgUrl']) }}"
+                        class="circle-img" style="border-radius: 55rem; margin-top: 1.1rem; margin-right: 1rem;">
                     {% endif %}
                     <input autocomplete="off" autofocus class="form-control mx-auto w-auto red" id="triggerPostModal"
                         placeholder="Post something" style="cursor: pointer;" data-bs-toggle="modal"
@@ -291,9 +215,9 @@
                             <div class="modal-body">
                                 <form method="post" id="editPostForm-{{ post['id'] }}"
                                     style="display: flex; flex-direction: column; align-items: center; justify-content: center;"
-                                    action="{{ url_for('edit_post') }}">
+                                    hx-post="{{ url_for('edit_post', post_id=post.id) }}" hx-target="#allPosts"
+                                    hx-trigger="submit" hx-swap="innerHTML">
                                     <div class="mb-2" style="width: 100%;">
-                                        <input type="hidden" name="postId" value="{{ post['id'] }}">
                                         <input autocomplete="off" autofocus class="form-control mx-auto w-auto"
                                             id="title" name="title" value="{{ post['title'] }}" type="text"
                                             maxlength="60">
@@ -305,8 +229,9 @@
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" type="submit" form="editPostForm-{{ post['id'] }}"
-                                    name="editPostForm">Edit</button>
+                                <button type="submit" class="btn btn-primary" type="submit"
+                                    form="editPostForm-{{ post['id'] }}" name="editPostForm"
+                                    data-bs-dismiss="modal">Edit</button>
                             </div>
                         </div>
                     </div>
@@ -330,8 +255,10 @@
                         <div class="postHeaderItems">
                             <a data-bs-toggle="modal" data-bs-target="#editPost-{{ post['id'] }}" href=""
                                 id="editPost"><i class="fa-solid fa-pen-to-square"></i></a>
-                            <a href="{{ url_for('deletePost', postId=post['id'], fromPage='index') }}"
-                                id="deletePost"><i class="fa-solid fa-trash"></i></a>
+                            <a href="" id="deletePost" hx-post="{{ url_for('delete_post', post_id=post.id) }}"
+                                hx-target="#allPosts" hx-swap="innerHTML" hx-trigger="click">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
                         </div>
                         {% endif %}
                     </div>
@@ -339,9 +266,11 @@
                         <span class="postTitle"><b>{{ post["title"] }}</b></span>
                         <span class="postBodyText">{{ post["body"] }}</span>
                         {% if post.imgUrl %}
-                            <div class="postImageDiv" style="margin-top: 1rem; width: 100%; display: flex; align-items: center !important; justify-content: center !important;">
-                                <img src="{{ url_for('static', filename='uploads/post-images/' + post.imgUrl) }}" style="max-width: 100%; min-height: 100%; max-height: 100%;">
-                            </div>
+                        <div class="postImageDiv"
+                            style="margin-top: 1rem; width: 100%; display: flex; align-items: center !important; justify-content: center !important;">
+                            <img src="{{ url_for('static', filename='uploads/post-images/' + post.imgUrl) }}"
+                                style="max-width: 100%; min-height: 100%; max-height: 100%;">
+                        </div>
                         {% endif %}
                     </div>
                     <div class="postFooter">
@@ -352,14 +281,21 @@
                                 <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
                                     width="36" height="36" style="border-radius: 55rem; margin-right: .5rem;">
                                 {% else %}
-                                <img class="circle-img" src="{{ url_for('static', filename='uploads/user-images/' + user['imgUrl']) }}" width="36" height="36"
-                                    style="border-radius: 55rem; margin-right: .5rem;">
+                                <img class="circle-img"
+                                    src="{{ url_for('static', filename='uploads/user-images/' + user['imgUrl']) }}"
+                                    width="36" height="36" style="border-radius: 55rem; margin-right: .5rem;">
                                 {% endif %}
                                 <form class="commentForm" method="post" id="commentForm-{{ post['id'] }}"
                                     style="width: 100%; display: flex;" data-post-id="{{ post['id'] }}"
-                                    data-user-id="{{ user['id'] }}" name="commentForm">
+                                    data-user-id="{{ user['id'] }}" name="commentForm" hx-post="
+                                    {% if path_contains('source=all') %}
+                                        {{ url_for('create_comment', post_id=post.id, source='all') }}
+                                    {% elif path_contains('source=following') %}
+                                        {{ url_for('create_comment', post_id=post.id, source='following') }}
+                                    {% endif %}
+                                    " hx-target="#allPosts" hx-swap="innerHTML" hx-trigger="submit">
                                     <input type="hidden" name="postId" value="{{ post['id'] }}">
-                                    <input class="form-control mx-auto w-auto" name="triggerCommentBody"
+                                    <input class="form-control mx-auto w-auto" name="body"
                                         placeholder="Comment something">
                                     <button name="commentForm" type="submit"
                                         style="border: none; background-color: inherit; margin-left: .5rem;"><i
@@ -369,10 +305,23 @@
                             </div>
                             <div class="postFooterReplies">
                                 {% if post['id'] in user['likedPostsId'] %}
-                                <a href="{{ url_for('unlikePost', postId=post['id'], fromPage='index', otherId=post['author']['id']) }}"
+                                <a href="" hx-get="
+                                {% if path_contains('source=all') %}
+                                    {{ url_for('handle_like', action='unlike', post_id=post.id, source='all') }}
+                                {% elif path_contains('source=following') %}
+                                    {{ url_for('handle_like', action='unlike', post_id=post.id, source='following') }}
+                                {% endif %}
+                                " hx-target="#allPosts" hx-swap="innerHTML" hx-trigger="click"
                                     style="margin-right: .5rem;"><i class="fa-solid fa-thumbs-up"></i></a>
                                 {% else %}
-                                <a href="{{ url_for('likePost', postId=post['id'], fromPage='index', otherId=post['author']['id']) }}"
+                                <a href="" hx-get="
+                                {% if path_contains('source=all') %}
+                                    {{ url_for('handle_like', action='like', post_id=post.id, source='all') }}
+                                {% elif path_contains('source=following') %}
+                                    {{ url_for('handle_like', action='like', post_id=post.id, source='following') }}
+                                {% endif %}
+                                "
+                                    hx-target="#allPosts" hx-swap="innerHTML" hx-trigger="click"
                                     style="margin-right: .5rem;"><i class="fa-regular fa-thumbs-up"></i></a>
                                 {% endif %}
                                 {% if post['comments'] %}
@@ -418,8 +367,16 @@
                                     </div>
                                     <div class="postCommentItems">
                                         {% if comment['author']['id'] == session["user_id"] %}
-                                        <a href="{{ url_for('deleteComment', postId=post['id'], commentId=comment['id'], fromPage='index') }}"
-                                            id="deleteComment"><i class="fa-solid fa-trash"></i></a>
+                                        <a href="" id="deleteComment" hx-get="
+                            
+                                        {% if path_contains('source=all') %}
+                                            {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='all') }}
+                                        {% elif path_contains('source=following') %}
+                                            {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='following') }}
+                                        {% endif %}
+                                        " hx-target="#allPosts" hx-swap="innerHTML" hx-trigger="click">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
                                         {% else %}
                                         {% endif %}
                                     </div>
