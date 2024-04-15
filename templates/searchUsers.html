@@ -32,12 +32,12 @@
                 <div class="profileFollowInfo">
                     {% if userProfile['id'] != user['id'] %}
                     {% if userProfile['id'] in user['followingId'] %}
-                    <a href="{{ url_for('handleFollow', otherId=userProfile['id'], task='unfollow') }}" class="btn btn-primary"
+                    <a href="{{ url_for('handle_follow', other_id=userProfile['id'], action='unfollow') }}" class="btn btn-primary follow-button"
                         style="border-radius: 55rem; height: 1.5rem; line-height: .5rem; margin-bottom: .5rem;"
-                        id="followBtn"></a>
+                        id="followBtn">Following</a>
                     {% else %}
-                    <a href="{{ url_for('handleFollow', otherId=userProfile['id'], task='follow') }}"
-                        class="btn btn-outline-primary"
+                    <a href="{{ url_for('handle_follow', other_id=userProfile['id'], action='follow') }}"
+                        class="btn btn-outline-primary follow-button"
                         style="border-radius: 55rem; height: 1.5rem; line-height: .5rem; margin-bottom: .5rem;">Follow</a>
                     {% endif %}
                     {% endif %}
