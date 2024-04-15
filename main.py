@@ -1,14 +1,21 @@
+import requests
+import os
+import random
+import sys
+import apiservice
 from flask import Flask, url_for, render_template, redirect, session, request, jsonify
 from flask_session import Session
 from helpers import login_required
 from datetime import datetime
 from werkzeug.utils import secure_filename
-import requests
-import os
+from datetime import datetime
 
 USERS_URL = "http://localhost:8080/users/"
 POSTS_URL = "http://localhost:8080/posts"
 COMMENTS_URL = "http://localhost:8080/comments"
+
+user_api = apiservice.Users()
+post_api = apiservice.Posts()
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
@@ -23,6 +30,16 @@ Session(app)
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def get_posts_template():
+    user = user_api.findById(session["user_id"])
+    posts = post_api.findAllOrderByDateDesc()
+    return render_template("base-posts.html", posts=posts, user=user)
+
+def get_user_profile_template(otherId):
+    user = user_api.findById(session["user_id"])
+    userProfile = user_api.findById(otherId)
+    return render_template("base-user-profile.html", user=user, userProfile=userProfile)
+
 @app.route("/")
 @login_required
 def linkup():
@@ -31,23 +48,23 @@ def linkup():
 @app.route("/linkup/<string:source>", methods=["GET", "POST"])
 @login_required
 def index(source):
-    user = requests.get(USERS_URL + session["user_id"]).json()
-    posts = requests.get(POSTS_URL + "/orderByDate").json()
+    user = user_api.findById(session["user_id"])
+    posts = post_api.findAllOrderByDateDesc()
     if request.method == "GET":
         match source:
             case "all":
-                posts = requests.get(POSTS_URL + "/orderByDate").json()
+                posts = post_api.findAllOrderByDateDesc()
             case "following":
-                posts = requests.get(USERS_URL + f"{session['user_id']}/followingPosts").json()
+                posts = user_api.getFollowingPosts(session["user_id"])
             case _:
-                posts = requests.get(POSTS_URL + "/orderByDate").json()
+                posts = post_api.findAllOrderByDateDesc()
             
     elif request.method == "POST":
         if "commentForm" in request.form:
             postId = request.form.get("postId")
             body = request.form.get("triggerCommentBody")
             if body:
-                req = requests.post(USERS_URL + f"{session['user_id']}/comment?postId={postId}", json={"body": body})
+                user_api.comment(session["user_id"], postId, {"body": body})
                 return redirect(url_for("index", source="all"))
         
         elif "searchForm" in request.form:
@@ -62,22 +79,79 @@ def index(source):
 
     
     return render_template("layout.html", user=user, posts=posts)
-    
 
-@app.route("/handle-post-image", methods=["POST"])
-def handle_post_image():
-    imgFile = request.files["postImageFile"]
-    finalName = request.form.get("finalName")
-    if allowed_file(imgFile.filename):
-                imgFile.save(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], finalName))
-    return imgFile.filename + "saved"
+@app.route("/create-post", methods=["POST"])
+def create_post():
+    title = request.form.get("title")
+    body = request.form.get("body")
+    imgFile = request.files.get("postImageFile")
+
+    if imgFile:
+        random.seed(datetime.now().timestamp())
+        rand = random.randint(1, sys.maxsize)
+        finalName = str(rand) + "." + imgFile.filename.split(".")[1]
+        if allowed_file(imgFile.filename):
+                    imgFile.save(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], finalName))
+
+        post_api.insert(session["user_id"], body={"title": title, "body": body, "imgUrl": finalName})
+    else:
+        post_api.insert(session["user_id"], body={"title": title, "body": body})
+
+    return get_posts_template()
+
+@app.route("/delete-post/<post_id>", methods=["POST"])
+def delete_post(post_id):
+    post_api.delete(post_id)
+    return get_posts_template()
+    
+@app.route("/create_comment/<post_id>", methods=["POST"])
+def create_comment(post_id):
+    body = request.form.get("body")
+    user_api.comment(session["user_id"], post_id, body={"body": body})
+    return get_posts_template()
+
+@app.route("/delete-comment/<post_id>/<comment_id>", methods=["GET"])
+def delete_comment(post_id, comment_id):
+    user_api.deleteComment(session["user_id"], post_id, comment_id)
+    return get_posts_template()
+
+@app.route("/handle-like/<action>/<post_id>")
+def handle_like(action, post_id):
+    match action:
+        case "like":
+            user_api.like(session["user_id"], post_id)
+        case "unlike":
+            user_api.unlike(session["user_id"], post_id)
+    return get_posts_template()
+
+@app.route("/handle-follow/<action>/<other_id>")
+@login_required
+def handle_follow(action, other_id):
+    match action:
+        case "follow":
+            user_api.follow(session["user_id"], other_id)
+        case "unfollow":
+            user_api.unfollow(session["user_id"], other_id)
+
+    return get_user_profile_template(other_id)
+
+
+@app.route("/edit-post/<post_id>", methods=["POST"])
+def edit_post(post_id):
+    title = request.form.get("title")
+    body = request.form.get("body")
+
+    if title and body:
+        post_api.edit(post_id, body={"title": title, "body": body})
+
+    return get_posts_template()
 
 @app.route("/searchUsers?name=<query>", methods=["GET", "POST"])
 @login_required
 def search_users(query):
     if request.method == "GET":
-        user = requests.get(USERS_URL + session["user_id"]).json()
-        users = requests.get(f"http://localhost:8080/users/search?userName={query}").json()
+        user = user_api.findById(session["user_id"])
+        users = user_api.findByName(query)
         return render_template("searchUsers.html", users=users, user=user, query=query)
     elif request.method == "POST": 
         if "searchForm" in request.form:
@@ -94,8 +168,8 @@ def search_users(query):
 @login_required
 def search_posts(query):
     if request.method == "GET":
-        user = requests.get(USERS_URL + session["user_id"]).json()
-        posts = requests.get(POSTS_URL + f"/fullSearch?text={query}").json()
+        user = user_api.findById(session["user_id"])
+        posts = post_api.findByFullSearch(query)
         return render_template("searchPosts.html", posts=posts, user=user, query=query)
     elif request.method == "POST":
         if "searchForm" in request.form:
@@ -108,30 +182,6 @@ def search_posts(query):
                     case "posts":
                         return redirect(url_for("search_posts", query=query))
 
-@app.route("/linkup/post/edit", methods=["POST"])
-@login_required
-def edit_post():
-    title = request.form.get("title")
-    body = request.form.get("body")
-
-    if title and body:
-        postId = request.form.get("postId")
-        requests.put(POSTS_URL + f"/{postId}", json={"title": title, "body": body})
-
-    return redirect(url_for("index", source="all"))
-
-@app.route("/getPosts", methods=["POST"])
-def get_posts():
-    data = request.json
-    title = data.get("title")
-    body = data.get("body")
-    imgUrl = data.get("imgUrl")
-    req = requests.post(POSTS_URL + f"/insert?userId={session['user_id']}", json={"title": title, "body": body, "imgUrl": imgUrl})
-
-    post = requests.get(USERS_URL + f"{session['user_id']}/posts?orderByDate=false").json()[0]
- 
-    return post
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     session.clear()
@@ -140,7 +190,7 @@ def login():
         if not request.form.get("email") or not request.form.get("password"):
             return redirect(url_for("login"))
 
-        obj = requests.get(USERS_URL + f"search?email={request.form.get('email')}").json()
+        obj = user_api.findByEmail(request.form.get("email"))
         email = obj["email"]
         password = obj["password"]
 
@@ -175,20 +225,19 @@ def register():
             "Fill the password field"
 
         if not requests.get(USERS_URL + f"search?email={email}"):
-            requests.post(USERS_URL + "insert", json={"name": username,
-                                                      "password": password,
-                                                      "email": email})
-            obj = requests.get(USERS_URL + f"search?email={email}").json()
+            user_api.insert(body={"name": username,
+                                  "password": password,
+                                  "email": email})
+            obj = user_api.findByEmail(email)
             session["user_id"] = obj["id"]
             return redirect(url_for("index", source="all"))
-
 
 @app.route("/edit-profile", methods=["GET", "POST"])
 @login_required
 def editProfile():
     if request.method == "GET":
-        obj = requests.get(USERS_URL + session["user_id"]).json()
-        return render_template("editProfile.html", user=obj)
+        user = user_api.findById(session["user_id"])
+        return render_template("editProfile.html", user=user)
     elif request.method == "POST":
         if "editProfile" in request.form:
             username = request.form.get("username")
@@ -203,10 +252,13 @@ def editProfile():
                 filename = session["user_id"] + "." + imgFile.filename.split(".")[1]
                 imgFile.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
-            requests.put(USERS_URL + session["user_id"], 
-                        json={"name": username, "email": email, 
-                            "password": password, "imgUrl": filename,
-                            "description": description, "birthDate": birthDate})
+            user_api.edit(session["user_id"], body={"name": username,
+                                                    "email": email,
+                                                    "password": password,
+                                                    "imgUrl": filename,
+                                                    "description": description,
+                                                    "birthDate": birthDate
+                                                    })
             return redirect(url_for("index", source="all"))
 
         elif "searchForm" in request.form:
@@ -222,9 +274,9 @@ def editProfile():
 
 @app.route("/profiles/<userId>", methods=["GET", "POST"])
 def viewProfile(userId):
-    user = requests.get(USERS_URL + session["user_id"]).json()
-    userProfile = requests.get(USERS_URL + userId).json()
-    posts = requests.get(USERS_URL + f"{userId}/posts").json()
+    user = user_api.findById(session["user_id"])
+    userProfile = user_api.findById(userId)
+    posts = user_api.findPostsByUserId(userId, order_by_date=True)
     if request.method == "GET":
         return render_template("profileDetails.html", userProfile=userProfile,
                                user=user, posts=posts)
@@ -234,9 +286,7 @@ def viewProfile(userId):
             postId = request.form.get("postId")
 
             if body:
-                requests.post(USERS_URL + f"{session['user_id']}/comment?postId={postId}",
-                              json={"body": body})
-
+                user_api.comment(session["user_id"], postId, body={"body": body})
             return redirect(url_for("viewProfile", userId=userId))
         
         elif "searchForm" in request.form:
@@ -248,62 +298,6 @@ def viewProfile(userId):
                         return redirect(url_for("search_users", query=query))
                     case "posts":
                         return redirect(url_for("search_posts", query=query))
-
-@app.route("/delete/post/<postId>?fromPage=<fromPage>")
-@login_required
-def deletePost(postId, fromPage):
-    req = requests.delete(POSTS_URL + f"/{postId}")
-    match fromPage:
-        case "index":
-            return redirect(url_for("index", source="all"))
-        case "profileDetails":
-            return redirect(url_for("viewProfile", userId=session["user_id"]))
-
-@app.route("/delete/comment/<commentId>/<postId>?fromPage=<fromPage>")
-@login_required
-def deleteComment(postId, commentId, fromPage):
-    req = requests.delete(USERS_URL + f"{session['user_id']}/deleteComment?postId={postId}&commentId={commentId}")
-    userProfileId = request.args.get('profileId')
-    match fromPage:
-        case "index":
-            return redirect(url_for("index", source="all"))
-        case "profileDetails":
-            return redirect(url_for("viewProfile", userId=userProfileId))
-
-@app.route("/like/post/<postId>?page=<fromPage>&otherId=<otherId>")
-@login_required
-def likePost(postId, fromPage, otherId):
-    userId = session["user_id"]
-    req = requests.get(USERS_URL + f"{userId}/like?postId={postId}")
-    match fromPage:
-        case "index":
-            return redirect(url_for("index", source="all"))
-        case "profileDetails":
-            return redirect(url_for("viewProfile", userId=otherId))
-
-@app.route("/unlike/post/<postId>?page=<fromPage>&otherId=<otherId>")
-@login_required
-def unlikePost(postId, fromPage, otherId):
-    userId = session["user_id"]
-    req = requests.get(USERS_URL + f"{userId}/unlike?postId={postId}")
-    match fromPage:
-        case "index":
-            return redirect(url_for("index", source="all"))
-        case "profileDetails":
-            return redirect(url_for("viewProfile", userId=otherId))
-
-@app.route("/<task>/<otherId>")
-@login_required
-def handleFollow(otherId, task):
-    userId = session["user_id"]
-    match task:
-        case "follow":
-            req = requests.get(USERS_URL + f"{userId}/follow?userId={otherId}")
-        case "unfollow":
-            req = requests.get(USERS_URL + f"{userId}/unfollow?userId={otherId}")
-
-    return redirect(url_for('viewProfile', userId=otherId))
-
 
 @app.template_filter('time_passed')
 def time_passed_filter(date_string):
