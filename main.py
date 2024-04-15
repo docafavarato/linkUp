@@ -10,9 +10,6 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
-USERS_URL = "http://localhost:8080/users/"
-POSTS_URL = "http://localhost:8080/posts"
-COMMENTS_URL = "http://localhost:8080/comments"
 
 user_api = apiservice.Users()
 post_api = apiservice.Posts()
@@ -30,10 +27,17 @@ Session(app)
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def get_posts_template():
+def path_contains(string):
+    return True if string in request.path else False
+
+def get_posts_template(source="all"):
     user = user_api.findById(session["user_id"])
-    posts = post_api.findAllOrderByDateDesc()
-    return render_template("base-posts.html", posts=posts, user=user)
+    match source:
+        case "all":
+            posts = post_api.findAllOrderByDateDesc()
+        case "following":
+            posts = user_api.getFollowingPosts(session["user_id"])
+    return render_template("base-posts.html", posts=posts, user=user, path_contains=path_contains)
 
 def get_user_profile_template(otherId):
     user = user_api.findById(session["user_id"])
@@ -45,7 +49,7 @@ def get_user_profile_template(otherId):
 def linkup():
     return redirect(url_for("index", source="all"))
 
-@app.route("/linkup/<string:source>", methods=["GET", "POST"])
+@app.route("/linkup/source=<source>", methods=["GET", "POST"])
 @login_required
 def index(source):
     user = user_api.findById(session["user_id"])
@@ -60,14 +64,7 @@ def index(source):
                 posts = post_api.findAllOrderByDateDesc()
             
     elif request.method == "POST":
-        if "commentForm" in request.form:
-            postId = request.form.get("postId")
-            body = request.form.get("triggerCommentBody")
-            if body:
-                user_api.comment(session["user_id"], postId, {"body": body})
-                return redirect(url_for("index", source="all"))
-        
-        elif "searchForm" in request.form:
+        if "searchForm" in request.form:
             option = request.form.get("flexRadioDefault")
             query = request.form.get("searchQuery")
             if query:
@@ -78,7 +75,7 @@ def index(source):
                         return redirect(url_for("search_posts", query=query))
 
     
-    return render_template("layout.html", user=user, posts=posts)
+    return render_template("layout.html", user=user, posts=posts, path_contains=path_contains)
 
 @app.route("/create-post", methods=["POST"])
 def create_post():
@@ -104,25 +101,25 @@ def delete_post(post_id):
     post_api.delete(post_id)
     return get_posts_template()
     
-@app.route("/create_comment/<post_id>", methods=["POST"])
-def create_comment(post_id):
+@app.route("/create-comment/<post_id>/source=<source>", methods=["POST"])
+def create_comment(post_id, source):
     body = request.form.get("body")
     user_api.comment(session["user_id"], post_id, body={"body": body})
-    return get_posts_template()
+    return get_posts_template(source)
 
-@app.route("/delete-comment/<post_id>/<comment_id>", methods=["GET"])
-def delete_comment(post_id, comment_id):
+@app.route("/delete-comment/<post_id>/<comment_id>/source=<source>", methods=["GET"])
+def delete_comment(post_id, comment_id, source):
     user_api.deleteComment(session["user_id"], post_id, comment_id)
-    return get_posts_template()
+    return get_posts_template(source)
 
-@app.route("/handle-like/<action>/<post_id>")
-def handle_like(action, post_id):
+@app.route("/handle-like/<action>/<post_id>/source=<source>")
+def handle_like(action, post_id, source):
     match action:
         case "like":
             user_api.like(session["user_id"], post_id)
         case "unlike":
             user_api.unlike(session["user_id"], post_id)
-    return get_posts_template()
+    return get_posts_template(source)
 
 @app.route("/handle-follow/<action>/<other_id>")
 @login_required
@@ -224,7 +221,7 @@ def register():
         elif not password:
             "Fill the password field"
 
-        if not requests.get(USERS_URL + f"search?email={email}"):
+        if not requests.get("http://localhost:8080/users/" + f"search?email={email}"):
             user_api.insert(body={"name": username,
                                   "password": password,
                                   "email": email})
@@ -281,15 +278,7 @@ def viewProfile(userId):
         return render_template("profileDetails.html", userProfile=userProfile,
                                user=user, posts=posts)
     elif request.method == "POST":
-        if "commentForm" in request.form:
-            body = request.form.get("triggerCommentBody")
-            postId = request.form.get("postId")
-
-            if body:
-                user_api.comment(session["user_id"], postId, body={"body": body})
-            return redirect(url_for("viewProfile", userId=userId))
-        
-        elif "searchForm" in request.form:
+        if "searchForm" in request.form:
             option = request.form.get("flexRadioDefault")
             query = request.form.get("searchQuery")
             if query:
