@@ -1,0 +1,16 @@
+{% if userProfile['id'] != user['id'] %}
+{% if userProfile['id'] in user['followingId'] %}
+<a href="" class="btn btn-primary follow-button"
+    style="border-radius: 55rem; height: 1.5rem; line-height: .5rem; margin-bottom: .5rem;" id="followBtn"
+    hx-get="{{ url_for('handle_follow', action='unfollow', other_id=userProfile.id) }}" hx-target="#profileFollowInfo"
+    hx-trigger="click" hx-swap="innerHTML">Following</a>
+{% else %}
+<a href="" hx-get="{{ url_for('handle_follow', action='follow', other_id=userProfile.id) }}"
+    hx-target="#profileFollowInfo" hx-trigger="click" hx-swap="innerHTML" class="btn btn-outline-primary follow-button"
+    style="border-radius: 55rem; height: 1.5rem; line-height: .5rem; margin-bottom: .5rem;">Follow</a>
+{% endif %}
+{% endif %}
+<div class="followInfo">
+    <span style="margin-right: .5rem;"><b>{{ userProfile['followersId']|length }}</b> followers</span>
+    <span><b>{{ userProfile['followingId']|length }}</b> following</span>
+</div>
