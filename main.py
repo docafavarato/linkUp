@@ -34,6 +34,11 @@ def path_contains(string):
     else:
         return True if string in unquote(request.path) else False
 
+def get_post_template():
+    user = user_api.findById(session["user_id"])
+    post = user_api.findPostsByUserId(user["id"], order_by_date=False)[0]
+    return render_template("base-post.html", post=post, user=user)
+
 def get_posts_template(source="all"):
     user = user_api.findById(session["user_id"])
     match source:
@@ -98,10 +103,12 @@ def create_post():
     else:
         post_api.insert(session["user_id"], body={"title": title, "body": body})
 
-    return get_posts_template()
+    return get_post_template()
 
 @app.route("/delete-post/<post_id>", methods=["POST"])
 def delete_post(post_id):
+    if (post_api.findById(post_id)["imgUrl"]):
+        os.remove(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], post_api.findById(post_id)["imgUrl"]))
     post_api.delete(post_id)
     return get_posts_template()
     

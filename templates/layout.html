@@ -140,7 +140,7 @@
                         <div class="modal-body">
                             <form method="post" id="postForm"
                                 style="display: flex; flex-direction: row; align-items: center; justify-content: center;"
-                                data-user-id="{{ user['id'] }}" hx-post="{{ url_for('create_post') }}"
+                                data-user-id="{{ user['id'] }}" hx-post="{{ url_for('create_post') }}" hx-swap="afterbegin"
                                 hx-target="#allPosts" hx-trigger="submit" hx-encoding='multipart/form-data'>
                                 <div class="mb-2" style="width: 100%;">
                                     <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="title"
@@ -353,7 +353,7 @@
                             <div class="postComment">
                                 <div class="postCommentHeader">
                                     <div class="postCommentAuthorInfo">
-                                        <img class="circle-img-small" src="{% if not comment['author']['imgUrl'] %}
+                                        <img class="circle-img-small commentImage" src="{% if not comment['author']['imgUrl'] %}
                                         https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                                 {% else %}
                                     {{ url_for('static', filename='uploads/user-images/' + comment['author']['imgUrl']) }}
