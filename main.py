@@ -9,6 +9,7 @@ from helpers import login_required
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from urllib.parse import unquote
 
 
 user_api = apiservice.Users()
@@ -28,7 +29,10 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def path_contains(string):
-    return True if string in request.path else False
+    if request.referrer:
+        return True if string in unquote(request.referrer) else False
+    else:
+        return True if string in unquote(request.path) else False
 
 def get_posts_template(source="all"):
     user = user_api.findById(session["user_id"])
