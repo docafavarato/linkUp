@@ -26,6 +26,58 @@ body {
     background-color: #F0F2F5;
 }
 
+#scrollBtn {
+    opacity: 0;
+    border: none;
+    border-radius: 500rem;
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    bottom: 20px;
+    right: 40px;
+    z-index: 99;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition-duration: 0.3s;
+    pointer-events: none;
+}
+
+#scrollBtn span {
+    display: none;
+}
+
+#scrollBtn.show {
+    pointer-events: auto;
+    opacity: 1 !important;
+    transition: opacity 0.3s ease;
+}
+
+#scrollBtn:hover {
+    background-color: #0138a7;
+    transform: rotate(360deg);
+    transition: opacity 0.3s ease;
+}
+
+@media screen and (max-width: 860px) {
+    #scrollBtn {
+        width: 170px;
+        height: 35px;
+        top: 90px !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    } 
+
+    #scrollBtn span {
+        margin-left: 8px;
+        display: block;
+    }
+}
+
 .profile-dropdown {
     background-color: inherit !important;
 }
@@ -120,7 +172,9 @@ body {
     max-width: 100%;
 }
 
-#loginForm input, #registerForm input, #editProfileForm input {
+#loginForm input,
+#registerForm input,
+#editProfileForm input {
     border-radius: 55rem;
     background-color: #F0F2F5;
     border: none;
@@ -129,18 +183,22 @@ body {
     max-width: 100%;
 }
 
-#loginForm button, #registerForm button, #editProfileForm button {
+#loginForm button,
+#registerForm button,
+#editProfileForm button {
     border-radius: 55rem;
     width: 20rem;
 }
 
-#loginForm #register, #registerForm #login {
+#loginForm #register,
+#registerForm #login {
     margin-top: 1rem;
     border-radius: 55rem;
     width: 20rem;
 }
 
-#loginForm #divisor, #registerForm #divisor {
+#loginForm #divisor,
+#registerForm #divisor {
     margin-top: 1rem;
     width: 20rem;
     border-bottom: 0.1px solid #F0F2F5 !important;
@@ -187,7 +245,7 @@ body {
     justify-content: center;
 }
 
-#editProfileForm{
+#editProfileForm {
     -webkit-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
     box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.75);
@@ -202,9 +260,11 @@ body {
     max-width: 100%;
 }
 
-.form-floating::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+.form-floating::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: red !important;
-    opacity: 1; /* Firefox */
+    opacity: 1;
+    /* Firefox */
 }
 
 #editProfileText {
@@ -272,11 +332,13 @@ body {
     max-width: 100%;
 }
 
-.postModal .modal-header, .commentModal .modal-header {
+.postModal .modal-header,
+.commentModal .modal-header {
     cursor: grab;
 }
 
-.postModal .modal-header:active, .commentModal .modal-header:active {
+.postModal .modal-header:active,
+.commentModal .modal-header:active {
     cursor: grabbing;
 }
 
@@ -362,7 +424,7 @@ body {
 }
 
 .profileLink::hover {
-        text-decoration: underline !important;
+    text-decoration: underline !important;
 }
 
 .containerProfile {
@@ -423,7 +485,7 @@ body {
     flex-direction: column !important;
 }
 
-#postForm .mb-3 {
+#postForm .mb-3, .editPostForm .mb-3 {
     width: 100% !important;
 }
 
@@ -482,11 +544,13 @@ body {
     width: 100%;
 }
 
-.postCommentHeader, .postCommentItems, .postCommentContent {
+.postCommentHeader,
+.postCommentItems,
+.postCommentContent {
     margin-left: 0rem !important;
 }
 
-#postImageFileButton {
+#postImageFileButton, .editPostImageFileButton {
     border: 1px dashed grey !important;
     background-color: #F0F2F5 !important;
     border-radius: .5rem;
@@ -653,4 +717,27 @@ body {
     width: 1px;
     color: black;
     background-color: black;
+}
+
+.apology-title {
+    font-size: 40px !important;
+    color: #0D6EFD;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.apology-header, .apology-body, .apology-footer {
+    width: 100%;
+}
+
+.apology-go-back {
+    height: 2rem;
+    line-height: 1rem;
+    border-radius: 4rem !important;
+    width: 10rem;
+}
+
+.postFooterReplies {
+    margin-bottom: .3rem;
 }
