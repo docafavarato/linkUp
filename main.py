@@ -33,7 +33,7 @@ def path_contains(string):
 
 def get_post_template():
     user = user_api.findById(session["user_id"])
-    post = user_api.findPostsByUserId(user["id"], order_by_date=False)[0]
+    post = user_api.findPostsByUserId(user["id"], order_by_date=True)[0]
     return render_template("base-post.html", post=post, user=user)
 
 def get_posts_by_user_id_template(user_id):
@@ -110,7 +110,7 @@ def create_post():
 @app.route("/delete-post/<post_id>/source=<source>", methods=["POST"])
 @app.route("/delete-post/<post_id>/<user_profile_id>/source=<source>", methods=["POST"])
 def delete_post(post_id, source, user_profile_id=None):
-    if (post_api.findById(post_id)["imgUrl"]):
+    if post_api.findById(post_id)["imgUrl"]:
         os.remove(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], post_api.findById(post_id)["imgUrl"]))
     post_api.delete(post_id)
 
@@ -175,8 +175,19 @@ def edit_post(post_id, source="all", user_profile_id=None):
     title = request.form.get("title")
     body = request.form.get("body")
 
+    imgFile = request.files.get("editPostImageFile")
+    previousImgUrl = request.form.get("previousImgUrl")
+
     if title and body:
-        post_api.edit(post_id, body={"title": title, "body": body})
+        if imgFile:
+            random.seed(datetime.now().timestamp())
+            rand = random.randint(1, sys.maxsize)
+            finalName = str(rand) + "." + imgFile.filename.split(".")[1]
+            if allowed_file(imgFile.filename):       
+                imgFile.save(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], finalName))
+                post_api.edit(post_id, body={"title": title, "body": body, "imgUrl": finalName})
+        else:
+            post_api.edit(post_id, body={"title": title, "body": body, "imgUrl": previousImgUrl})
         match source:
             case "all" | "following":
                 return get_posts_template(source)
@@ -318,7 +329,6 @@ def editProfile():
 
 @app.route("/profiles/<userId>", methods=["GET", "POST"])
 def viewProfile(userId):
-    print(request.path)
     user = user_api.findById(session["user_id"])
     userProfile = user_api.findById(userId)
     posts = user_api.findPostsByUserId(userId, order_by_date=True)

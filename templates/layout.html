@@ -216,10 +216,10 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form method="post" id="editPostForm-{{ post['id'] }}"
+                                <form method="post" id="editPostForm-{{ post['id'] }}" class="editPostForm"
                                     style="display: flex; flex-direction: column; align-items: center; justify-content: center;"
                                     hx-post="{{ url_for('edit_post', post_id=post.id, source='all') }}" hx-target="#allPosts"
-                                    hx-trigger="submit" hx-swap="innerHTML">
+                                    hx-trigger="submit" hx-swap="innerHTML" hx-encoding='multipart/form-data'>
                                     <div class="mb-2" style="width: 100%;">
                                         <input autocomplete="off" autofocus class="form-control mx-auto w-auto"
                                             id="title" name="title" value="{{ post['title'] }}" type="text"
@@ -229,6 +229,15 @@
                                         <textarea class="form-control" name="body"
                                             style="width: 100%;">{{ post['body'] }}</textarea>
                                     </div>
+                                    <div class="mb-3" style="display: flex; flex-direction: column; align-items: flex-start;">
+                                    <button type="button" class="form-control mx-auto w-auto editPostImageFileButton" placeholder="Select an image" id="editPostImageFileButton-{{ post.id }}" onclick="handleEditPostImageInput('{{ post.id }}');">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        Select or drop an image
+                                    </button>
+                                    <input class="form-control editPostImageFile" type="file" id="editPostImageFile-{{ post.id }}" name="editPostImageFile"
+                                        style="display: none;" accept="image/png, image/jpg, image/jpeg">
+                                    <input style="display: none;" value="{{ post.imgUrl }}" name="previousImgUrl">
+                                </div>
                                 </form>
                             </div>
                             <div class="modal-footer">
@@ -306,7 +315,7 @@
                                             id="submit-commentForm-{{ post['id'] }}"></i></button>
                                 </form>
                             </div>
-                            <div class="postFooterReplies" style="margin-bottom: .3rem;">
+                            <div class="postFooterReplies">
                                 {% if post['id'] in user['likedPostsId'] %}
                                 <a href="" hx-get="
                                 {% if path_contains('source=all') %}

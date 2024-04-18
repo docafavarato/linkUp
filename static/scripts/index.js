@@ -20,10 +20,7 @@ function toggleText(element) {
 
 function addDateMask(input) {
     input.addEventListener('input', function (event) {
-        // Remove caracteres não numéricos
         let inputValue = event.target.value.replace(/\D/g, '');
-
-        // Formata a data (dd/MM/yyyy)
         if (inputValue.length > 2) {
             inputValue = inputValue.substring(0, 2) + '/' + inputValue.substring(2);
         }
@@ -52,11 +49,27 @@ $("#fileInput").change(function () {
 });
 
 
+document.addEventListener('DOMContentLoaded', function() {
+    var followButtons = document.querySelectorAll('.follow-button');
+    followButtons.forEach(function(button) {
+        button.addEventListener('mouseover', function() {
+            if (this.textContent.trim() === 'Following') {
+                this.textContent = 'Unfollow';
+            }
+        });
+        button.addEventListener('mouseout', function() {
+            if (this.textContent.trim() === 'Unfollow') {
+                this.textContent = 'Following';
+            }
+        });
+    });
+});
+
 $(document).ready(function () {
     const currentUrl = window.location.href;
-    if (currentUrl.includes("/linkup/all")) {
+    if (currentUrl.includes("/source%3Dall")) {
         document.querySelector(".sourceAll").classList.add("current");
-    } else if (currentUrl.includes("/linkup/following")) {
+    } else if (currentUrl.includes("/source%3Dfollowing")) {
         document.querySelector(".sourceFollowing").classList.add("current");
     }
 
@@ -71,9 +84,29 @@ $(document).ready(function () {
                 </div>
             `;
         } else {
-            fakeInput.setAttribute("placeholder", "Select an image");
+            fakeInput.setAttribute("placeholder", "Select or drop an image");
         }
     });
+})
+
+$(document).ready(function() {
+    var realInputs = document.querySelectorAll(".editPostImageFile");
+    realInputs.forEach(realInput => {
+        realInput.addEventListener("change", function(ev) {
+            console.log("changed " + realInput.id)
+            var fakeInput = document.getElementById("editPostImageFileButton-" + realInput.id.split("-")[1]);
+            if (realInput.files.length > 0) {
+                fakeInput.innerHTML = `
+                    <div>
+                        ${realInput.files[0].name}
+                        <button style="border: none; background-color: none;" type="button" onclick="clearPostImageInput();"><i class="fa-solid fa-x"></i></button>
+                    </div>
+                `;
+            } else {
+                fakeInput.setAttribute("placeholder", "Select an image");
+            }
+        })
+    })
 })
 
 function clearPostImageInput() {
@@ -84,7 +117,7 @@ function clearPostImageInput() {
     fakeInput.innerHTML = null;
     fakeInput.innerHTML = `
             <i class="fa-solid fa-cloud-arrow-up"></i>
-            Select an image
+            Select or drop an image
     `;
 }
 
@@ -92,6 +125,24 @@ function handlePostImageInput() {
     var realInput = document.getElementById("postImageFile");
     realInput.click();
 }
+
+function handleEditPostImageInput(id) {
+    var realInput = document.getElementById("editPostImageFile-" + id);
+    realInput.click()
+}
+
+function clearEditPostImageInput(id) {
+    var realInput = document.getElementById("editPostImageFile-" + id)
+    var fakeInput = document.getElementById("editPostImageFileButton-" + id);
+
+    realInput.value = null;
+    fakeInput.innerHTML = null;
+    fakeInput.innerHTML = `
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            Select an image
+    `;
+}
+
 
 $(document).ready(function () {
     var dropArea = document.getElementById("postImageFileButton");
@@ -151,3 +202,18 @@ $(document).ready(function () {
         }
     }
 })
+
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 1500 || document.documentElement.scrollTop > 1500) {
+    document.getElementById("scrollBtn").classList.add("show");
+  } else {
+    document.getElementById("scrollBtn").classList.remove("show");
+  }
+}
+
+function scrollToTop() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+}
