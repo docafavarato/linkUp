@@ -180,6 +180,7 @@ def edit_post(post_id, source="all", user_profile_id=None):
 
     if title and body:
         if imgFile:
+            os.remove(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], previousImgUrl))
             random.seed(datetime.now().timestamp())
             rand = random.randint(1, sys.maxsize)
             finalName = str(rand) + "." + imgFile.filename.split(".")[1]
