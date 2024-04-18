@@ -5,7 +5,7 @@ import sys
 import apiservice
 from flask import Flask, url_for, render_template, redirect, session, request, jsonify
 from flask_session import Session
-from helpers import login_required
+from helpers import login_required, apology
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -29,15 +29,17 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def path_contains(string):
-    if request.referrer:
-        return True if string in unquote(request.referrer) else False
-    else:
-        return True if string in unquote(request.path) else False
+    return True if string in unquote(request.path) else False
 
 def get_post_template():
     user = user_api.findById(session["user_id"])
     post = user_api.findPostsByUserId(user["id"], order_by_date=False)[0]
     return render_template("base-post.html", post=post, user=user)
+
+def get_posts_by_user_id_template(user_id):
+    user = user_api.findById(session["user_id"])
+    posts = user_api.findPostsByUserId(user_id, order_by_date=True)
+    return render_template("base-posts-profile.html", posts=posts, user=user, path_contains=path_contains)
 
 def get_posts_template(source="all"):
     user = user_api.findById(session["user_id"])
@@ -105,32 +107,55 @@ def create_post():
 
     return get_post_template()
 
-@app.route("/delete-post/<post_id>", methods=["POST"])
-def delete_post(post_id):
+@app.route("/delete-post/<post_id>/source=<source>", methods=["POST"])
+@app.route("/delete-post/<post_id>/<user_profile_id>/source=<source>", methods=["POST"])
+def delete_post(post_id, source, user_profile_id=None):
     if (post_api.findById(post_id)["imgUrl"]):
         os.remove(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], post_api.findById(post_id)["imgUrl"]))
     post_api.delete(post_id)
-    return get_posts_template()
+
+    match source:
+        case "all" | "following":
+            return get_posts_template(source)
+        case "profile":
+            return get_posts_by_user_id_template(user_profile_id)
     
 @app.route("/create-comment/<post_id>/source=<source>", methods=["POST"])
-def create_comment(post_id, source):
+@app.route("/create-comment/<post_id>/<user_profile_id>/source=<source>", methods=["POST"])
+def create_comment(post_id, source, user_profile_id=None):
     body = request.form.get("body")
     user_api.comment(session["user_id"], post_id, body={"body": body})
-    return get_posts_template(source)
+
+    match source:
+        case "all" | "following":
+            return get_posts_template(source)
+        case "profile":
+            return get_posts_by_user_id_template(user_profile_id)
 
 @app.route("/delete-comment/<post_id>/<comment_id>/source=<source>", methods=["GET"])
-def delete_comment(post_id, comment_id, source):
+@app.route("/delete-comment/<post_id>/<comment_id>/<user_profile_id>/source=<source>", methods=["GET"])
+def delete_comment(post_id, comment_id, source, user_profile_id=None):
     user_api.deleteComment(session["user_id"], post_id, comment_id)
-    return get_posts_template(source)
+    match source:
+        case "all" | "following":
+            return get_posts_template(source)
+        case "profile":
+            return get_posts_by_user_id_template(user_profile_id)
 
 @app.route("/handle-like/<action>/<post_id>/source=<source>")
-def handle_like(action, post_id, source):
+@app.route("/handle-like/<action>/<post_id>/<user_profile_id>/source=<source>")
+def handle_like(action, post_id, source, user_profile_id=None):
     match action:
         case "like":
             user_api.like(session["user_id"], post_id)
         case "unlike":
             user_api.unlike(session["user_id"], post_id)
-    return get_posts_template(source)
+
+    match source:
+        case "all" | "following":
+            return get_posts_template(source)
+        case "profile":
+            return get_posts_by_user_id_template(user_profile_id)
 
 @app.route("/handle-follow/<action>/<other_id>")
 @login_required
@@ -144,15 +169,21 @@ def handle_follow(action, other_id):
     return get_user_profile_template(other_id)
 
 
-@app.route("/edit-post/<post_id>", methods=["POST"])
-def edit_post(post_id):
+@app.route("/edit-post/<post_id>/source=<source>", methods=["POST"])
+@app.route("/edit-post/<post_id>/<user_profile_id>/source=<source>", methods=["POST"])
+def edit_post(post_id, source="all", user_profile_id=None):
     title = request.form.get("title")
     body = request.form.get("body")
 
     if title and body:
         post_api.edit(post_id, body={"title": title, "body": body})
+        match source:
+            case "all" | "following":
+                return get_posts_template(source)
+            case "profile":
+                return get_posts_by_user_id_template(user_profile_id)
 
-    return get_posts_template()
+    
 
 @app.route("/searchUsers?name=<query>", methods=["GET", "POST"])
 @login_required
@@ -199,14 +230,17 @@ def login():
             return redirect(url_for("login"))
 
         obj = user_api.findByEmail(request.form.get("email"))
-        email = obj["email"]
-        password = obj["password"]
+        if not "error" in obj:
+            email = obj["email"]
+            password = obj["password"]
 
-        if email == request.form.get("email") and password == request.form.get("password"):
-            session["user_id"] = obj["id"]
-            return redirect(url_for("index", source="all"))
+            if email == request.form.get("email") and password == request.form.get("password"):
+                session["user_id"] = obj["id"]
+                return redirect(url_for("index", source="all"))
+            else:
+                return apology("The password is incorrect", go_back=url_for('login'))
         else:
-            return redirect(url_for("login"))
+            return apology("There is no account associated with that email", go_back=url_for('register'))
 
     else:
         return render_template("login.html")
@@ -230,7 +264,7 @@ def register():
         if not username or not password:
             return "Fill the username field"
         elif not password:
-            "Fill the password field"
+            return "Fill the password field"
 
         if not requests.get("http://localhost:8080/users/" + f"search?email={email}"):
             user_api.insert(body={"name": username,
@@ -239,6 +273,8 @@ def register():
             obj = user_api.findByEmail(email)
             session["user_id"] = obj["id"]
             return redirect(url_for("index", source="all"))
+        else:
+            return apology("There is already an account associated with that email.", go_back=url_for('login'))
 
 @app.route("/edit-profile", methods=["GET", "POST"])
 @login_required
@@ -282,6 +318,7 @@ def editProfile():
 
 @app.route("/profiles/<userId>", methods=["GET", "POST"])
 def viewProfile(userId):
+    print(request.path)
     user = user_api.findById(session["user_id"])
     userProfile = user_api.findById(userId)
     posts = user_api.findPostsByUserId(userId, order_by_date=True)

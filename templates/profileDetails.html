@@ -66,7 +66,7 @@
                 <div class="modal-body">
                     <form method="post" id="editPostForm-{{ post['id'] }}"
                         style="display: flex; flex-direction: column; align-items: center; justify-content: center;"
-                        hx-post="{{ url_for('edit_post', post_id=post.id) }}" hx-target="#containerProfilePosts" hx-trigger="submit"
+                        hx-post="{{ url_for('edit_post', post_id=post.id, source='profile', user_profile_id=post.author.id) }}" hx-target="#containerProfilePosts" hx-trigger="submit"
                         hx-swap="innerHTML">
                         <div class="mb-2" style="width: 100%;">
                             <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="title"
@@ -104,7 +104,7 @@
             <div class="postHeaderItems">
                 <a data-bs-toggle="modal" data-bs-target="#editPost-{{ post['id'] }}" href="" id="editPost"><i
                         class="fa-solid fa-pen-to-square"></i></a>
-                <a href="" id="deletePost" hx-post="{{ url_for('delete_post', post_id=post.id) }}" hx-target="#containerProfilePosts"
+                <a href="" id="deletePost" hx-post="{{ url_for('delete_post', post_id=post.id, source='profile', user_profile_id=post.author.id) }}" hx-target="#containerProfilePosts"
                     hx-swap="innerHTML" hx-trigger="click">
                     <i class="fa-solid fa-trash"></i>
                 </a>
@@ -137,7 +137,8 @@
                     <form class="commentForm" method="post" id="commentForm-{{ post['id'] }}"
                         style="width: 100%; display: flex;" data-post-id="{{ post['id'] }}"
                         data-user-id="{{ user['id'] }}" name="commentForm"
-                        hx-post="{{ url_for('create_comment', post_id=post.id) }}" hx-target="#containerProfilePosts"
+                        hx-post="
+                        {{ url_for('create_comment', post_id=post.id, source='profile', user_profile_id=post.author.id) }}" hx-target="#containerProfilePosts"
                         hx-swap="innerHTML" hx-trigger="submit">
                         <input type="hidden" name="postId" value="{{ post['id'] }}">
                         <input class="form-control mx-auto w-auto" name="body" placeholder="Comment something">
@@ -149,12 +150,12 @@
                 </div>
                 <div class="postFooterReplies">
                     {% if post['id'] in user['likedPostsId'] %}
-                    <a href="" hx-get="{{ url_for('handle_like', action='unlike', post_id=post.id) }}"
-                        hx-target="#containerProfilePosts" hx-swap="innerHTML" hx-trigger="click" style="margin-right: .5rem;"><i
+                    <a href="" hx-get="{{ url_for('handle_like', action='unlike', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
+                        hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click" style="margin-right: .5rem;"><i
                             class="fa-solid fa-thumbs-up"></i></a>
                     {% else %}
-                    <a href="" hx-get="{{ url_for('handle_like', action='like', post_id=post.id) }}"
-                        hx-target="#containerProfilePosts" hx-swap="innerHTML" hx-trigger="click" style="margin-right: .5rem;"><i
+                    <a href="" hx-get="{{ url_for('handle_like', action='like', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
+                        hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click" style="margin-right: .5rem;"><i
                             class="fa-regular fa-thumbs-up"></i></a>
                     {% endif %}
                     {% if post['comments'] %}
@@ -200,7 +201,7 @@
                         <div class="postCommentItems">
                             {% if comment['author']['id'] == session["user_id"] %}
                             <a href="" id="deleteComment"
-                                hx-get="{{ url_for('delete_comment', post_id=post.id, comment_id=comment.id) }}"
+                                hx-get="{{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile', user_profile_id=post.author.id) }}"
                                 hx-target="#containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
                                 <i class="fa-solid fa-trash"></i>
                             </a>

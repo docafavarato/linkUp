@@ -11,7 +11,7 @@
             <div class="modal-body">
                 <form method="post" id="editPostForm-{{ post['id'] }}"
                     style="display: flex; flex-direction: column; align-items: center; justify-content: center;"
-                    hx-post="{{ url_for('edit_post', post_id=post.id) }}" hx-target="#allPosts" hx-trigger="submit"
+                    hx-post="{{ url_for('edit_post', post_id=post.id, source='all') }}" hx-target="#allPosts" hx-trigger="submit"
                     hx-swap="innerHTML">
                     <div class="mb-2" style="width: 100%;">
                         <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="title" name="title"
@@ -48,7 +48,7 @@
         <div class="postHeaderItems">
             <a data-bs-toggle="modal" data-bs-target="#editPost-{{ post['id'] }}" href="" id="editPost"><i
                     class="fa-solid fa-pen-to-square"></i></a>
-            <a href="" id="deletePost" hx-post="{{ url_for('delete_post', post_id=post.id) }}" hx-target="#allPosts"
+            <a href="" id="deletePost" hx-post="{{ url_for('delete_post', post_id=post.id, source='all') }}" hx-target="#allPosts"
                 hx-swap="innerHTML" hx-trigger="click">
                 <i class="fa-solid fa-trash"></i>
             </a>
@@ -126,7 +126,7 @@
                 {% else %}
                 {% endif %}
                 {% if post['usersThatLiked'] %}
-                <span class="likeAmount" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+                <span class="likeAmount tool" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
                     data-bs-title="{% for user in post['usersThatLiked'] %} {{ user['name']}}<br>{% endfor %}">
                     {% if post['usersThatLiked']|length > 1 %}
                     {{ post['usersThatLiked']|length }} likes
@@ -142,7 +142,7 @@
             <div class="postComment">
                 <div class="postCommentHeader">
                     <div class="postCommentAuthorInfo">
-                        <img class="circle-img-small" src="{% if not comment['author']['imgUrl'] %}
+                        <img class="circle-img-small commentImage" src="{% if not comment['author']['imgUrl'] %}
                                         https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                                 {% else %}
                                     {{ url_for('static', filename='uploads/user-images/' + comment['author']['imgUrl']) }}
@@ -154,8 +154,9 @@
                             data-bs-placement="top" data-bs-title="{{ comment['date'] }}">{{
                             comment["date"].replace("-", "/") | time_passed }}</span>
                     </div>
+                    {% if comment['author']['id'] == session["user_id"] %}
                     <div class="postCommentItems">
-                        {% if comment['author']['id'] == session["user_id"] %}
+
                         <a href="" id="deleteComment" hx-get="
                             
                                         {% if path_contains('source=all') %}
@@ -166,9 +167,8 @@
                                         " hx-target="#allPosts" hx-swap="innerHTML" hx-trigger="click">
                             <i class="fa-solid fa-trash"></i>
                         </a>
-                        {% else %}
-                        {% endif %}
                     </div>
+                    {% endif %}
                 </div>
                 <div class="postCommentContent">
                     <span class="postCommentBody">{{ comment['body'] }}</span>
