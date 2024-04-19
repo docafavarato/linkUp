@@ -12,7 +12,7 @@
                 <form method="post" id="editPostForm-{{ post['id'] }}" class="editPostForm"
                     style="display: flex; flex-direction: column; align-items: center; justify-content: center;"
                     hx-post="{{ url_for('edit_post', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
-                    hx-target="#containerProfilePosts" hx-trigger="submit" hx-swap="innerHTML"
+                    hx-target=".containerProfilePosts" hx-trigger="submit" hx-swap="innerHTML"
                     hx-encoding='multipart/form-data'>
                     <div class="mb-2" style="width: 100%;">
                         <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="title" name="title"
@@ -66,8 +66,8 @@
                         id="editPost"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" id="deletePost" hx-post="{{ url_for('delete_post', post_id=post.id, source='all') }}"
-                        hx-target="#allPosts" hx-swap="innerHTML" hx-trigger="click">
+                        <a class="dropdown-item" id="deletePost" hx-post="{{ url_for('delete_post', user_profile_id=userProfileId, post_id=post.id, source='profile') }}"
+                        hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
                         <i class="fa-solid fa-trash"></i> Delete</a>
                     </li>
                 </ul>
@@ -78,7 +78,7 @@
     <div class="postBody" style="width: 100%;">
         <span class="postTitle"><b>{{ post["title"] }}</b></span>
         <span class="postBodyText">{{ post["body"] }}</span>
-        {% if post.imgUrl %}
+        {% if post.imgUrl and not post.imgUrl == "None" %}
         <div class="postImageDiv"
             style="margin-top: 1rem; width: 100%; display: flex; align-items: center !important; justify-content: center !important;">
             <img src="{{ url_for('static', filename='uploads/post-images/' + post.imgUrl) }}"
@@ -102,7 +102,7 @@
                     name="commentForm"
                     hx-post="
                         {{ url_for('create_comment', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
-                    hx-target="#containerProfilePosts" hx-swap="innerHTML" hx-trigger="submit">
+                    hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="submit">
                     <input type="hidden" name="postId" value="{{ post['id'] }}">
                     <input class="form-control mx-auto w-auto" name="body" placeholder="Comment something">
                     <button name="commentForm" type="submit"
@@ -167,7 +167,7 @@
                         {% if comment['author']['id'] == session["user_id"] %}
                         <a href="" id="deleteComment"
                             hx-get="{{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile', user_profile_id=post.author.id) }}"
-                            hx-target="#containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
+                            hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
                             <i class="fa-solid fa-trash"></i>
                         </a>
                         {% else %}

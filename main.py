@@ -39,7 +39,7 @@ def get_post_template():
 def get_posts_by_user_id_template(user_id):
     user = user_api.findById(session["user_id"])
     posts = user_api.findPostsByUserId(user_id, order_by_date=True)
-    return render_template("base-posts-profile.html", posts=posts, user=user, path_contains=path_contains)
+    return render_template("base-posts-profile.html", posts=posts, user=user, path_contains=path_contains, userProfileId=user_id)
 
 def get_posts_template(source="all"):
     user = user_api.findById(session["user_id"])
@@ -121,7 +121,7 @@ def create_post():
 @app.route("/delete-post/<post_id>/query=<query>/source=<source>", methods=["POST"])
 @app.route("/delete-post/<post_id>/<user_profile_id>/source=<source>", methods=["POST"])
 def delete_post(post_id, source, user_profile_id=None, query=None):
-    if post_api.findById(post_id)["imgUrl"]:
+    if post_api.findById(post_id)["imgUrl"] and post_api.findById(post_id)["imgUrl"] != "None":
         os.remove(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], post_api.findById(post_id)["imgUrl"]))
     post_api.delete(post_id)
 

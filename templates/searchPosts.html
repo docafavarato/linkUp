@@ -92,7 +92,7 @@
             <div class="postBody" style="width: 100%;">
                 <span class="postTitle"><b>{{ post["title"] }}</b></span>
                 <span class="postBodyText">{{ post["body"] }}</span>
-                {% if post.imgUrl %}
+                {% if post.imgUrl and not post.imgUrl == "None" %}
                 <div class="postImageDiv"
                     style="margin-top: 1rem; width: 100%; display: flex; align-items: center !important; justify-content: center !important;">
                     <img src="{{ url_for('static', filename='uploads/post-images/' + post.imgUrl) }}"

@@ -741,3 +741,16 @@ body {
 .postFooterReplies {
     margin-bottom: .3rem;
 }
+
+.postHeaderDropdown a {
+    cursor: pointer;
+    user-select: none;
+}
+
+.modal-header {
+    cursor: grab;
+}
+
+.modal-header:active {
+    cursor: grabbing;
+}

@@ -5,9 +5,12 @@ $(document).ready(function () {
 });
 
 $(function () {
-    $(".postModal").draggable({
-        handle: ".modal-header",
-    });
+    var modals = document.querySelectorAll(".modal");
+    modals.forEach(modal => {
+        $(modal).draggable({
+            handle: ".modal-header",
+        });
+    })
 });
 
 function toggleText(element) {
@@ -49,15 +52,15 @@ $("#fileInput").change(function () {
 });
 
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var followButtons = document.querySelectorAll('.follow-button');
-    followButtons.forEach(function(button) {
-        button.addEventListener('mouseover', function() {
+    followButtons.forEach(function (button) {
+        button.addEventListener('mouseover', function () {
             if (this.textContent.trim() === 'Following') {
                 this.textContent = 'Unfollow';
             }
         });
-        button.addEventListener('mouseout', function() {
+        button.addEventListener('mouseout', function () {
             if (this.textContent.trim() === 'Unfollow') {
                 this.textContent = 'Following';
             }
@@ -89,10 +92,10 @@ $(document).ready(function () {
     });
 })
 
-$(document).ready(function() {
+$(document).ready(function () {
     var realInputs = document.querySelectorAll(".editPostImageFile");
     realInputs.forEach(realInput => {
-        realInput.addEventListener("change", function(ev) {
+        realInput.addEventListener("change", function (ev) {
             console.log("changed " + realInput.id)
             var fakeInput = document.getElementById("editPostImageFileButton-" + realInput.id.split("-")[1]);
             if (realInput.files.length > 0) {
@@ -203,14 +206,14 @@ $(document).ready(function () {
     }
 })
 
-window.onscroll = function() {scrollFunction()};
+window.onscroll = function () { scrollFunction() };
 
 function scrollFunction() {
-  if (document.body.scrollTop > 1500 || document.documentElement.scrollTop > 1500) {
-    document.getElementById("scrollBtn").classList.add("show");
-  } else {
-    document.getElementById("scrollBtn").classList.remove("show");
-  }
+    if (document.body.scrollTop > 1500 || document.documentElement.scrollTop > 1500) {
+        document.getElementById("scrollBtn").classList.add("show");
+    } else {
+        document.getElementById("scrollBtn").classList.remove("show");
+    }
 }
 
 function scrollToTop() {
