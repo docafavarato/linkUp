@@ -1,0 +1,48 @@
+{% for userProfile in users %}
+<div class="container containerProfile">
+    <div class="profileItems" style="width: 100%; height: 100%;">
+        <div class="profileImageContainer">
+            <img class="circle-img-big" src="{% if not userProfile['imgUrl'] %}
+                                https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
+                            {% else %}
+                                {{ url_for('static', filename='uploads/user-images/' + userProfile['imgUrl']) }}
+                            {% endif %}" width="100" height="100"
+                style="border-radius: 55rem; margin-top: 1.1rem; margin-right: 1rem;">
+        </div>
+        <div class="profileTexts">
+            <a href="{{ url_for('viewProfile', userId=userProfile['id']) }}" class="profileName"
+                style="text-decoration: none;">{{ userProfile["name"] }}</a>
+            <span class="profileDesc">
+                <div class="profileDescText">
+                    {% if userProfile['description'] %}
+                    {{ userProfile['description'] }}
+                    {% else %}
+                    No description
+                    {% endif %}
+                </div>
+                <div class="profileDescItems">
+                    <span class="profileDescBirthDate">{{ userProfile['birthDate'] }}</span>
+                </div>
+            </span>
+        </div>
+        <div class="profileFollowInfo">
+            {% if userProfile['id'] != user['id'] %}
+            {% if userProfile['id'] in user['followingId'] %}
+            <a href="" class="btn btn-primary follow-button"
+                style="border-radius: 55rem; height: 1.5rem; line-height: .5rem; margin-bottom: .5rem;" id="followBtn"
+                hx-get="{{ url_for('handle_follow', other_id=userProfile.id, action='unfollow', query=query, source='profileSearch') }}"
+                hx-trigger="click" hx-swap="innerHTML" hx-target=".containerProfilesResult">Following</a>
+            {% else %}
+            <a href="" class="btn btn-outline-primary follow-button"
+                style="border-radius: 55rem; height: 1.5rem; line-height: .5rem; margin-bottom: .5rem;"
+                hx-get="{{ url_for('handle_follow', other_id=userProfile.id, action='follow', query=query, source='profileSearch') }}"
+                hx-trigger="click" hx-swap="innerHTML" hx-target=".containerProfilesResult">Follow</a>
+            {% endif %}
+            {% endif %}
+            <div class="followInfo">
+                <span style="margin-right: .5rem;"><b>{{ userProfile['followersId']|length }}</b> followers</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
