@@ -55,6 +55,11 @@ def get_user_profile_template(otherId):
     userProfile = user_api.findById(otherId)
     return render_template("base-user-profile.html", user=user, userProfile=userProfile)
 
+def get_user_profile_search_template(query):
+    user = user_api.findById(session["user_id"])
+    users = user_api.findByName(query)
+    return render_template("base-users-search.html", users=users, user=user, query=query)
+
 @app.route("/")
 @login_required
 def linkup():
@@ -158,15 +163,20 @@ def handle_like(action, post_id, source, user_profile_id=None):
             return get_posts_by_user_id_template(user_profile_id)
 
 @app.route("/handle-follow/<action>/<other_id>")
+@app.route("/handle-follow/<action>/<other_id>/query=<query>/source=<source>")
 @login_required
-def handle_follow(action, other_id):
+def handle_follow(action, other_id, source=None, query=None):
     match action:
         case "follow":
             user_api.follow(session["user_id"], other_id)
         case "unfollow":
             user_api.unfollow(session["user_id"], other_id)
 
-    return get_user_profile_template(other_id)
+    match source:
+        case "profileSearch":
+            return get_user_profile_search_template(query)
+        case _:
+            return get_user_profile_template(other_id)
 
 
 @app.route("/edit-post/<post_id>/source=<source>", methods=["POST"])
