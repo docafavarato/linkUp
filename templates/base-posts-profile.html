@@ -58,13 +58,20 @@
 
         {% if post["author"]["id"] == session["user_id"] %}
         <div class="postHeaderItems">
-            <a data-bs-toggle="modal" data-bs-target="#editPost-{{ post['id'] }}" href="" id="editPost"><i
-                    class="fa-solid fa-pen-to-square"></i></a>
-            <a href="" id="deletePost"
-                hx-post="{{ url_for('delete_post', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
-                hx-target="#containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
-                <i class="fa-solid fa-trash"></i>
-            </a>
+            <div class="dropdown postHeaderDropdown dropend">
+                <button style="border: none; background-color: inherit;" class="post-options-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-ellipsis"></i></button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editPost-{{ post['id'] }}" href=""
+                        id="editPost"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" id="deletePost" hx-post="{{ url_for('delete_post', post_id=post.id, source='all') }}"
+                        hx-target="#allPosts" hx-swap="innerHTML" hx-trigger="click">
+                        <i class="fa-solid fa-trash"></i> Delete</a>
+                    </li>
+                </ul>
+            </div>
         </div>
         {% endif %}
     </div>
@@ -144,7 +151,7 @@
             <div class="postComment">
                 <div class="postCommentHeader">
                     <div class="postCommentAuthorInfo">
-                        <img class="circle-img-small" src="{% if not comment['author']['imgUrl'] %}
+                        <img class="circle-img-small commentImage" src="{% if not comment['author']['imgUrl'] %}
                                         https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                                 {% else %}
                                     {{ url_for('static', filename='uploads/user-images/' + comment['author']['imgUrl']) }}
