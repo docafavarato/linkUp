@@ -103,19 +103,21 @@ def create_post():
     title = request.form.get("title")
     body = request.form.get("body")
     imgFile = request.files.get("postImageFile")
+    tags = request.form.getlist("tags")
 
-    if imgFile:
-        random.seed(datetime.now().timestamp())
-        rand = random.randint(1, sys.maxsize)
-        finalName = str(rand) + "." + imgFile.filename.split(".")[1]
-        if allowed_file(imgFile.filename):
-                    imgFile.save(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], finalName))
+    if title != "":
+        if imgFile:
+            random.seed(datetime.now().timestamp())
+            rand = random.randint(1, sys.maxsize)
+            finalName = str(rand) + "." + imgFile.filename.split(".")[1]
+            if allowed_file(imgFile.filename):
+                        imgFile.save(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], finalName))
 
-        post_api.insert(session["user_id"], body={"title": title, "body": body, "imgUrl": finalName})
-    else:
-        post_api.insert(session["user_id"], body={"title": title, "body": body})
+            post_api.insert(session["user_id"], body={"title": title, "body": body, "tags": tags, "imgUrl": finalName})
+        else:
+            post_api.insert(session["user_id"], body={"title": title, "body": body, "tags": tags})
 
-    return get_post_template()
+        return get_post_template()
 
 @app.route("/delete-post/<post_id>/source=<source>", methods=["POST"])
 @app.route("/delete-post/<post_id>/query=<query>/source=<source>", methods=["POST"])
