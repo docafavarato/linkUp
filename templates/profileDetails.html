@@ -32,17 +32,17 @@
         </div>
         <div class="profileFollowInfo" id="profileFollowInfo">
             {% if userProfile['id'] != user['id'] %}
-                {% if userProfile['id'] in user['followingId'] %}
-                <a href="" class="btn btn-primary follow-button"
-                    style="border-radius: 55rem; height: 1.5rem; line-height: .5rem; margin-bottom: .5rem;"
-                    id="followBtn" hx-get="{{ url_for('handle_follow', action='unfollow', other_id=userProfile.id) }}" hx-target="#profileFollowInfo"
-                    hx-trigger="click" hx-swap="innerHTML">Following</a>
-                {% else %}
-                <a href="" hx-get="{{ url_for('handle_follow', action='follow', other_id=userProfile.id) }}" hx-target="#profileFollowInfo"
-                hx-trigger="click" hx-swap="innerHTML"
-                    class="btn btn-outline-primary follow-button"
-                    style="border-radius: 55rem; height: 1.5rem; line-height: .5rem; margin-bottom: .5rem;">Follow</a>
-                {% endif %}
+            {% if userProfile['id'] in user['followingId'] %}
+            <a href="" class="btn btn-primary follow-button"
+                style="border-radius: 55rem; height: 1.5rem; line-height: .5rem; margin-bottom: .5rem;" id="followBtn"
+                hx-get="{{ url_for('handle_follow', action='unfollow', other_id=userProfile.id) }}"
+                hx-target="#profileFollowInfo" hx-trigger="click" hx-swap="innerHTML">Following</a>
+            {% else %}
+            <a href="" hx-get="{{ url_for('handle_follow', action='follow', other_id=userProfile.id) }}"
+                hx-target="#profileFollowInfo" hx-trigger="click" hx-swap="innerHTML"
+                class="btn btn-outline-primary follow-button"
+                style="border-radius: 55rem; height: 1.5rem; line-height: .5rem; margin-bottom: .5rem;">Follow</a>
+            {% endif %}
             {% endif %}
             <div class="followInfo">
                 <span style="margin-right: .5rem;"><b>{{ userProfile['followersId']|length }}</b> followers</span>
@@ -65,29 +65,31 @@
                 </div>
                 <div class="modal-body">
                     <form method="post" id="editPostForm-{{ post['id'] }}" class="editPostForm"
-                    style="display: flex; flex-direction: column; align-items: center; justify-content: center;"
-                    hx-post="{{ url_for('edit_post', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
-                    hx-target=".containerProfilePosts" hx-trigger="submit" hx-swap="innerHTML"
-                    hx-encoding='multipart/form-data'>
-                    <div class="mb-2" style="width: 100%;">
-                        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="title" name="title"
-                            value="{{ post['title'] }}" type="text" maxlength="60">
-                    </div>
-                    <div class="mb-3" style="width: 100%;">
-                        <textarea class="form-control" name="body" style="width: 100%;">{{ post['body'] }}</textarea>
-                    </div>
-                    <div class="mb-3" style="display: flex; flex-direction: column; align-items: flex-start;">
-                        <button type="button" class="form-control mx-auto w-auto editPostImageFileButton"
-                            placeholder="Select an image" id="editPostImageFileButton-{{ post.id }}"
-                            onclick="handleEditPostImageInput('{{ post.id }}');">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                            Select or drop an image
-                        </button>
-                        <input class="form-control editPostImageFile" type="file" id="editPostImageFile-{{ post.id }}"
-                            name="editPostImageFile" style="display: none;" accept="image/png, image/jpg, image/jpeg">
-                        <input style="display: none;" value="{{ post.imgUrl }}" name="previousImgUrl">
-                    </div>
-                </form>
+                        style="display: flex; flex-direction: column; align-items: center; justify-content: center;"
+                        hx-post="{{ url_for('edit_post', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
+                        hx-target=".containerProfilePosts" hx-trigger="submit" hx-swap="innerHTML"
+                        hx-encoding='multipart/form-data'>
+                        <div class="mb-2" style="width: 100%;">
+                            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="title"
+                                name="title" value="{{ post['title'] }}" type="text" maxlength="60">
+                        </div>
+                        <div class="mb-3" style="width: 100%;">
+                            <textarea class="form-control" name="body"
+                                style="width: 100%;">{{ post['body'] }}</textarea>
+                        </div>
+                        <div class="mb-3" style="display: flex; flex-direction: column; align-items: flex-start;">
+                            <button type="button" class="form-control mx-auto w-auto editPostImageFileButton"
+                                placeholder="Select an image" id="editPostImageFileButton-{{ post.id }}"
+                                onclick="handleEditPostImageInput('{{ post.id }}');">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                Select or drop an image
+                            </button>
+                            <input class="form-control editPostImageFile" type="file"
+                                id="editPostImageFile-{{ post.id }}" name="editPostImageFile" style="display: none;"
+                                accept="image/png, image/jpg, image/jpeg">
+                            <input style="display: none;" value="{{ post.imgUrl }}" name="previousImgUrl">
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" type="submit" form="editPostForm-{{ post['id'] }}"
@@ -114,16 +116,18 @@
             {% if post["author"]["id"] == session["user_id"] %}
             <div class="postHeaderItems">
                 <div class="dropdown postHeaderDropdown dropend">
-                    <button style="border: none; background-color: inherit;" class="post-options-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-ellipsis"></i></button>
+                    <button style="border: none; background-color: inherit;" class="post-options-toggle" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-ellipsis"></i></button>
                     <ul class="dropdown-menu">
                         <li>
-                            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editPost-{{ post['id'] }}" href=""
-                            id="editPost"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editPost-{{ post['id'] }}"
+                                href="" id="editPost"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" id="deletePost" hx-post="{{ url_for('delete_post', user_profile_id=userProfile.id, post_id=post.id, source='profile') }}"
-                            hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
-                            <i class="fa-solid fa-trash"></i> Delete</a>
+                            <a class="dropdown-item" id="deletePost"
+                                hx-post="{{ url_for('delete_post', user_profile_id=userProfile.id, post_id=post.id, source='profile') }}"
+                                hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
+                                <i class="fa-solid fa-trash"></i> Delete</a>
                         </li>
                     </ul>
                 </div>
@@ -143,6 +147,13 @@
         </div>
         <div class="postFooter">
             <div class="divisor"></div>
+            {% if post.tags %}
+            <div class="postTags">
+                {% for tag in post.tags %}
+                <button type="button" class="btn btn-outline-primary postTag">{{ tag }}</button>
+                {% endfor %}
+            </div>
+            {% endif %}
             <div class="postFooterItems">
                 <div class="postFooterCommentInput">
                     {% if not user["imgUrl"] %}
@@ -169,13 +180,15 @@
                 </div>
                 <div class="postFooterReplies">
                     {% if post['id'] in user['likedPostsId'] %}
-                    <a href="" hx-get="{{ url_for('handle_like', action='unlike', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
-                        hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click" style="margin-right: .5rem;"><i
-                            class="fa-solid fa-thumbs-up"></i></a>
+                    <a href=""
+                        hx-get="{{ url_for('handle_like', action='unlike', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
+                        hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click"
+                        style="margin-right: .5rem;"><i class="fa-solid fa-thumbs-up"></i></a>
                     {% else %}
-                    <a href="" hx-get="{{ url_for('handle_like', action='like', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
-                        hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click" style="margin-right: .5rem;"><i
-                            class="fa-regular fa-thumbs-up"></i></a>
+                    <a href=""
+                        hx-get="{{ url_for('handle_like', action='like', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
+                        hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click"
+                        style="margin-right: .5rem;"><i class="fa-regular fa-thumbs-up"></i></a>
                     {% endif %}
                     {% if post['comments'] %}
                     <a style="margin-right: .5rem;" data-bs-toggle="collapse" href="#post-{{ post['id'] }}"

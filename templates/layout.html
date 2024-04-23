@@ -165,6 +165,13 @@
                                     <input class="form-control" type="file" id="postImageFile" name="postImageFile"
                                         style="display: none;" accept="image/png, image/jpg, image/jpeg">
                                 </div>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Tags" onkeypress="return event.key != ' '"
+                                    style="width: 2rem !important; height: 2.5rem !important;" id="tag-name-input" maxlength="30">
+                                    <button class="btn btn-outline-primary" type="button" id="add-tag-button"
+                                    style="height: 2.5rem !important;">Add</button>
+                                </div>
+                                <div class="hashtags" id="hashtags" style="width: 100%; display: flex; flex-direction: row; align-items: flex-start; flex-wrap: wrap !important;"></div>
                             </form>
                         </div>
                         <div class="modal-footer">
@@ -279,16 +286,18 @@
                 <div class="container containerPosts">
                     <div class="postHeader" style="margin-top: .5rem;">
                         <img class="circle-img" src="{% if not post['author']['imgUrl'] %}
-                                https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
-                        {% else %}
-                            {{ url_for('static', filename='uploads/user-images/' + post['author']['imgUrl']) }}
-                        {% endif %}" width="35" height="35" style="border-radius: 55rem;">
-                        <span style="margin-left: .2rem;"><a
-                                href="{{ url_for('viewProfile', userId=post['author']['id']) }}" class="profileLink">{{
-                                post['author']['name'] }}</a></span>
-                        <span style="margin-left: .5rem;" class="dateAgo" data-bs-toggle="tooltip"
-                            data-bs-placement="top" data-bs-title="{{ post['date'] }}">{{ post["date"].replace("-", "/")
-                            | time_passed }}</span>
+                                    https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
+                            {% else %}
+                                {{ url_for('static', filename='uploads/user-images/' + post['author']['imgUrl']) }}
+                            {% endif %}" width="35" height="35" style="border-radius: 55rem;">
+                        <div class="postHeaderData">
+                            <span><a
+                                    href="{{ url_for('viewProfile', userId=post['author']['id']) }}" class="profileLink">{{
+                                    post['author']['name'] }}</a></span>
+                            <span class="dateAgo" data-bs-toggle="tooltip"
+                                data-bs-placement="top" data-bs-title="{{ post['date'] }}">{{ post["date"].replace("-", "/")
+                                | time_passed }}</span>
+                        </div>
 
                         {% if post["author"]["id"] == session["user_id"] %}
                         <div class="postHeaderItems">
@@ -324,6 +333,13 @@
                     </div>
                     <div class="postFooter">
                         <div class="divisor"></div>
+                        {% if post.tags %}
+                        <div class="postTags">
+                            {% for tag in post.tags %}
+                                <button type="button" class="btn btn-outline-primary postTag">{{ tag }}</button>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                         <div class="postFooterItems">
                             <div class="postFooterCommentInput">
                                 {% if not user["imgUrl"] %}
