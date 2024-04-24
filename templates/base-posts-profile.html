@@ -45,16 +45,17 @@
 <div class="container containerPosts">
     <div class="postHeader" style="margin-top: .5rem;">
         <img class="circle-img" src="{% if not post['author']['imgUrl'] %}
-                                https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
-                        {% else %}
-                            {{ url_for('static', filename='uploads/user-images/' + post['author']['imgUrl']) }}
-                        {% endif %}" width="35" height="35" style="border-radius: 55rem;">
-        <span style="margin-left: .2rem;"><a href="{{ url_for('viewProfile', userId=post['author']['id']) }}"
-                class="profileLink">{{
-                post['author']['name'] }}</a></span>
-        <span style="margin-left: .5rem;" class="dateAgo" data-bs-toggle="tooltip" data-bs-placement="top"
-            data-bs-title="{{ post['date'] }}">{{ post["date"].replace("-", "/")
-            | time_passed }}</span>
+                                    https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
+                            {% else %}
+                                {{ url_for('static', filename='uploads/user-images/' + post['author']['imgUrl']) }}
+                            {% endif %}" width="35" height="35" style="border-radius: 55rem;">
+        <div class="postHeaderData">
+            <span><a href="{{ url_for('viewProfile', userId=post['author']['id']) }}" class="profileLink">{{
+                    post['author']['name'] }}</a></span>
+            <span class="dateAgo" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ post['date'] }}">{{
+                post["date"].replace("-", "/")
+                | time_passed }}</span>
+        </div>
 
         {% if post["author"]["id"] == session["user_id"] %}
         <div class="postHeaderItems">
