@@ -34,7 +34,7 @@ def path_contains(string):
 def get_post_template():
     user = user_api.findById(session["user_id"])
     post = user_api.findPostsByUserId(user["id"], order_by_date=True)[0]
-    return render_template("base-post.html", post=post, user=user)
+    return render_template("base-post.html", post=post, user=user, path_contains=path_contains)
 
 def get_posts_by_user_id_template(user_id):
     user = user_api.findById(session["user_id"])
@@ -60,10 +60,13 @@ def get_user_profile_search_template(query):
     users = user_api.findByName(query)
     return render_template("base-users-search.html", users=users, user=user, query=query)
 
-def get_posts_search_template(query):
+def get_posts_search_template(query=None, tag=None):
     user = user_api.findById(session["user_id"])
-    posts = post_api.findByFullSearch(query)
-    return render_template("base-posts-search.html", posts=posts, user=user, query=query)
+    if query:
+        posts = post_api.findByFullSearch(query)
+    elif tag:
+        posts = post_api.findByTag(tag)
+    return render_template("base-posts-search.html", posts=posts, user=user, query=query, tag=tag)
 
 @app.route("/")
 @login_required
@@ -121,8 +124,9 @@ def create_post():
 
 @app.route("/delete-post/<post_id>/source=<source>", methods=["POST"])
 @app.route("/delete-post/<post_id>/query=<query>/source=<source>", methods=["POST"])
+@app.route("/delete-post/<post_id>/tag=<tag>/source=<source>", methods=["POST"])
 @app.route("/delete-post/<post_id>/<user_profile_id>/source=<source>", methods=["POST"])
-def delete_post(post_id, source, user_profile_id=None, query=None):
+def delete_post(post_id, source, user_profile_id=None, query=None, tag=None):
     if post_api.findById(post_id)["imgUrl"] and post_api.findById(post_id)["imgUrl"] != "None":
         os.remove(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], post_api.findById(post_id)["imgUrl"]))
     post_api.delete(post_id)
@@ -133,12 +137,16 @@ def delete_post(post_id, source, user_profile_id=None, query=None):
         case "profile":
             return get_posts_by_user_id_template(user_profile_id)
         case "postSearch":
-            return get_posts_search_template(query)
+            if query:
+                return get_posts_search_template(query=query)
+            elif tag:
+                return get_posts_search_template(tag=tag)
     
 @app.route("/create-comment/<post_id>/source=<source>", methods=["POST"])
 @app.route("/create-comment/<post_id>/query=<query>/source=<source>", methods=["POST"])
+@app.route("/create-comment/<post_id>/tag=<tag>/source=<source>", methods=["POST"])
 @app.route("/create-comment/<post_id>/<user_profile_id>/source=<source>", methods=["POST"])
-def create_comment(post_id, source, user_profile_id=None, query=None):
+def create_comment(post_id, source, user_profile_id=None, query=None, tag=None):
     body = request.form.get("body")
     user_api.comment(session["user_id"], post_id, body={"body": body})
 
@@ -148,12 +156,16 @@ def create_comment(post_id, source, user_profile_id=None, query=None):
         case "profile":
             return get_posts_by_user_id_template(user_profile_id)
         case "postSearch":
-            return get_posts_search_template(query)
+            if query:
+                return get_posts_search_template(query=query)
+            elif tag:
+                return get_posts_search_template(tag=tag)
 
 @app.route("/delete-comment/<post_id>/<comment_id>/source=<source>", methods=["GET"])
 @app.route("/delete-comment/<post_id>/<comment_id>/query=<query>/source=<source>", methods=["GET"])
+@app.route("/delete-comment/<post_id>/<comment_id>/tag=<tag>/source=<source>", methods=["GET"])
 @app.route("/delete-comment/<post_id>/<comment_id>/<user_profile_id>/source=<source>", methods=["GET"])
-def delete_comment(post_id, comment_id, source, user_profile_id=None, query=None):
+def delete_comment(post_id, comment_id, source, user_profile_id=None, query=None, tag=None):
     user_api.deleteComment(session["user_id"], post_id, comment_id)
     match source:
         case "all" | "following":
@@ -161,12 +173,17 @@ def delete_comment(post_id, comment_id, source, user_profile_id=None, query=None
         case "profile":
             return get_posts_by_user_id_template(user_profile_id)
         case "postSearch":
-            return get_posts_search_template(query)
+            if query:
+                return get_posts_search_template(query=query)
+            elif tag:
+                return get_posts_search_template(tag=tag)
+
 
 @app.route("/handle-like/<action>/<post_id>/source=<source>")
 @app.route("/handle-like/<action>/<post_id>/<user_profile_id>/source=<source>")
 @app.route("/handle-like/<action>/<post_id>/query=<query>/source=<source>")
-def handle_like(action, post_id, source, user_profile_id=None, query=None):
+@app.route("/handle-like/<action>/<post_id>/tag=<tag>/source=<source>")
+def handle_like(action, post_id, source, user_profile_id=None, query=None, tag=None):
     match action:
         case "like":
             user_api.like(session["user_id"], post_id)
@@ -179,7 +196,10 @@ def handle_like(action, post_id, source, user_profile_id=None, query=None):
         case "profile":
             return get_posts_by_user_id_template(user_profile_id)
         case "postSearch":
-            return get_posts_search_template(query)
+            if query:
+                return get_posts_search_template(query=query)
+            elif tag:
+                return get_posts_search_template(tag=tag)
 
 @app.route("/handle-follow/<action>/<other_id>")
 @app.route("/handle-follow/<action>/<other_id>/query=<query>/source=<source>")
@@ -201,7 +221,8 @@ def handle_follow(action, other_id, source=None, query=None):
 @app.route("/edit-post/<post_id>/source=<source>", methods=["POST"])
 @app.route("/edit-post/<post_id>/<user_profile_id>/source=<source>", methods=["POST"])
 @app.route("/edit-post/<post_id>/query=<query>/source=<source>", methods=["POST"])
-def edit_post(post_id, source="all", user_profile_id=None, query=None):
+@app.route("/edit-post/<post_id>/tag=<tag>/source=<source>", methods=["POST"])
+def edit_post(post_id, source="all", user_profile_id=None, query=None, tag=None):
     title = request.form.get("title")
     body = request.form.get("body")
 
@@ -226,8 +247,10 @@ def edit_post(post_id, source="all", user_profile_id=None, query=None):
             case "profile":
                 return get_posts_by_user_id_template(user_profile_id)
             case "postSearch":
-                return get_posts_search_template(query)
-
+                if query:
+                    return get_posts_search_template(query=query)
+                elif tag:
+                    return get_posts_search_template(tag=tag)
     
 @app.route("/searchUsers?name=<query>", methods=["GET", "POST"])
 @login_required
@@ -248,12 +271,16 @@ def search_users(query):
                         return redirect(url_for("search_posts", query=query))
 
 @app.route("/searchPosts?query=<query>", methods=["GET", "POST"])
+@app.route("/searchPosts?tag=<tag>", methods=["GET", "POST"])
 @login_required
-def search_posts(query):
+def search_posts(query=None, tag=None):
     if request.method == "GET":
         user = user_api.findById(session["user_id"])
-        posts = post_api.findByFullSearch(query)
-        return render_template("searchPosts.html", posts=posts, user=user, query=query)
+        if query:
+            posts = post_api.findByFullSearch(query)
+        elif tag:
+            posts = post_api.findByTag(tag)
+        return render_template("searchPosts.html", posts=posts, user=user, query=query, tag=tag)
     elif request.method == "POST":
         if "searchForm" in request.form:
             option = request.form.get("flexRadioDefault")
