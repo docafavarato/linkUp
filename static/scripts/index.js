@@ -2,7 +2,47 @@ $(document).ready(function () {
     $("#loginButton").click(function (e) {
         $(".alert").fadeIn("slow");
     });
+
+    const inputField = document.getElementById("tag-name-input");
+    const hashtagContainer = document.getElementById("hashtags");
+    const addButton = document.getElementById("add-tag-button");
+    addButton.addEventListener("click", function () {
+        const hashtag = inputField.value.trim();
+        if (hashtag !== "") {
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "tags";
+            hiddenInput.value = hashtag;
+            hiddenInput.style.display = "none";
+            document.getElementById("postForm").appendChild(hiddenInput);
+            const hashtagElement = document.createElement("div");
+            hashtagElement.innerHTML = `
+                <div class="hashtag" id="hashtag-${hashtag}">
+                    <button type="button" class="remove-hashtag-button btn btn-outline-primary" onclick="removeTag('hashtag-${hashtag}')">
+                        <span class="hashtag-text">${hashtag}</span>
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            `
+            hashtagContainer.appendChild(hashtagElement);
+            inputField.value = "";
+        }
+    });
 });
+
+function removeTag(id) {
+    var hiddenInput = document.querySelector('input[name="tags"][value="' + id.split('hashtag-')[1] + '"]');
+    hiddenInput.parentNode.removeChild(hiddenInput);
+
+    var tag = document.getElementById(id);
+    tag.remove();
+}
+
+function isTagAlreadyAdded(tag) {
+    const hiddenInput = document.querySelector('input[name="tags"]');
+    const tags = hiddenInput.value.split(",");
+    return tags.includes(tag);
+}
 
 $(function () {
     var modals = document.querySelectorAll(".modal");
