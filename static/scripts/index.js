@@ -7,6 +7,9 @@ $(document).ready(function () {
     const hashtagContainer = document.getElementById("hashtags");
     const addButton = document.getElementById("add-tag-button");
     addButton.addEventListener("click", function () {
+
+        if (countNonEmptyDivs() >= 5) { return; }
+
         const hashtag = inputField.value.trim();
         if (hashtag !== "") {
             const hiddenInput = document.createElement("input");
@@ -28,7 +31,26 @@ $(document).ready(function () {
             inputField.value = "";
         }
     });
+
+    const publishButton = document.getElementById('publishButton');
+
+    publishButton.addEventListener("click", function () {
+        setTimeout(function () {
+            document.getElementById('postForm').reset();
+        }, 1000);
+    });
 });
+
+function countNonEmptyDivs() {
+    var nonEmptyDivsCount = 0;
+    var hashtags = document.querySelectorAll('.hashtag');
+    hashtags.forEach(function (div) {
+        if (div.innerHTML.trim() !== '') {
+            nonEmptyDivsCount++;
+        }
+    });
+    return nonEmptyDivsCount;
+}
 
 function removeTag(id) {
     var hiddenInput = document.querySelector('input[name="tags"][value="' + id.split('hashtag-')[1] + '"]');
