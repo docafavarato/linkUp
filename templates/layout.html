@@ -152,7 +152,7 @@
                                         style="border-radius: .5rem;">
                                 </div>
                                 <div class="mb-3">
-                                    <textarea class="form-control" placeholder="Body" name="body"></textarea>
+                                    <textarea class="form-control" placeholder="Body" name="body" id="bodyTextarea"></textarea>
                                 </div>
                                 <div class="mb-3"
                                     style="display: flex; flex-direction: column; align-items: flex-start;">
@@ -166,7 +166,7 @@
                                         style="display: none;" accept="image/png, image/jpg, image/jpeg">
                                 </div>
                                 <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="Tags" onkeypress="return event.key != ' '"
+                                    <input type="text" class="form-control" placeholder="Tags (up to 5)" onkeypress="return event.key != ' '"
                                     style="width: 2rem !important; height: 2.5rem !important;" id="tag-name-input" maxlength="30">
                                     <button class="btn btn-outline-primary" type="button" id="add-tag-button"
                                     style="height: 2.5rem !important;">Add</button>
@@ -336,7 +336,7 @@
                         {% if post.tags %}
                         <div class="postTags">
                             {% for tag in post.tags %}
-                                <button type="button" class="btn btn-outline-primary postTag">{{ tag }}</button>
+                                <a href="{{ url_for('search_posts', tag=tag) }}" class="btn btn-outline-primary postTag">{{ tag }}</a>
                             {% endfor %}
                         </div>
                         {% endif %}

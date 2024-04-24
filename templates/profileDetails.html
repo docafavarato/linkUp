@@ -150,7 +150,7 @@
             {% if post.tags %}
             <div class="postTags">
                 {% for tag in post.tags %}
-                <button type="button" class="btn btn-outline-primary postTag">{{ tag }}</button>
+                <a href="{{ url_for('search_posts', tag=tag) }}" class="btn btn-outline-primary postTag">{{ tag }}</a>
                 {% endfor %}
             </div>
             {% endif %}

@@ -2,10 +2,15 @@
 {% block title %}Search posts{% endblock %}
 {% block main %}
 <div class="container containerSearchResults" style="margin-top: 3rem">
+    {% if tag %}
+    <span id="postsMatchingText">Posts with tag: <span style="color: black !important;">{{ tag }}</span></span>
+    {% endif %}
     {% if not posts %}
     <span id="postsMatchingText">No posts matching: <span style="color: black !important;">{{ query }}</span></span>
     {% else %}
+    {% if query %}
     <span id="postsMatchingText">Posts matching: <span style="color: black !important;">{{ query }}</span></span>
+    {% endif %}
     <div class="containerPostSearchResults">
         {% for post in posts %}
         {% if post['author']['id'] == session['user_id'] %}
@@ -20,8 +25,13 @@
                     <div class="modal-body">
                         <form method="post" id="editPostForm-{{ post['id'] }}" class="editPostForm"
                             style="display: flex; flex-direction: column; align-items: center; justify-content: center;"
-                            hx-post="{{ url_for('edit_post', post_id=post.id, source='postSearch', query=query) }}"
-                            hx-target=".containerPostSearchResults" hx-trigger="submit" hx-swap="innerHTML"
+                            hx-post="
+                            {% if tag %}
+                                {{ url_for('edit_post', post_id=post.id, source='postSearch', tag=tag) }}
+                            {% elif query %}
+                                {{ url_for('edit_post', post_id=post.id, source='postSearch', query=query) }}
+                            {% endif %}
+                            " hx-target=".containerPostSearchResults" hx-trigger="submit" hx-swap="innerHTML"
                             hx-encoding='multipart/form-data'>
                             <div class="mb-2" style="width: 100%;">
                                 <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="title"
@@ -80,9 +90,13 @@
                                         class="fa-solid fa-pen-to-square"></i> Edit</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" id="deletePost"
-                                    hx-post="{{ url_for('delete_post', post_id=post.id, query=query, source='postSearch') }}"
-                                    hx-target=".containerPostSearchResults" hx-swap="innerHTML" hx-trigger="click">
+                                <a class="dropdown-item" id="deletePost" hx-post="
+                                    {% if tag %}
+                                    {{ url_for('delete_post', post_id=post.id, tag=tag, source='postSearch') }}
+                                    {% elif query %}
+                                        {{ url_for('delete_post', post_id=post.id, query=query, source='postSearch') }}
+                                    {% endif %}
+                                    " hx-target=".containerPostSearchResults" hx-swap="innerHTML" hx-trigger="click">
                                     <i class="fa-solid fa-trash"></i> Delete</a>
                             </li>
                         </ul>
@@ -106,7 +120,8 @@
                 {% if post.tags %}
                 <div class="postTags">
                     {% for tag in post.tags %}
-                    <button type="button" class="btn btn-outline-primary postTag">{{ tag }}</button>
+                    <a href="{{ url_for('search_posts', tag=tag) }}" class="btn btn-outline-primary postTag">{{ tag
+                        }}</a>
                     {% endfor %}
                 </div>
                 {% endif %}
@@ -122,9 +137,13 @@
                         {% endif %}
                         <form class="commentForm" method="post" id="commentForm-{{ post['id'] }}"
                             style="width: 100%; display: flex;" data-post-id="{{ post['id'] }}"
-                            data-user-id="{{ user['id'] }}" name="commentForm"
-                            hx-post="{{ url_for('create_comment', post_id=post.id, query=query, source='postSearch') }}"
-                            hx-target=".containerPostSearchResults" hx-swap="innerHTML" hx-trigger="submit">
+                            data-user-id="{{ user['id'] }}" name="commentForm" hx-post="
+                            {% if tag %}
+                            {{ url_for('create_comment', post_id=post.id, tag=tag, source='postSearch') }}
+                            {% elif query %}
+                                {{ url_for('create_comment', post_id=post.id, query=query, source='postSearch') }}
+                            {% endif %}
+                            " hx-target=".containerPostSearchResults" hx-swap="innerHTML" hx-trigger="submit">
                             <input type="hidden" name="postId" value="{{ post['id'] }}">
                             <input class="form-control mx-auto w-auto" name="body" placeholder="Comment something">
                             <button name="commentForm" type="submit"
@@ -135,14 +154,24 @@
                     </div>
                     <div class="postFooterReplies">
                         {% if post['id'] in user['likedPostsId'] %}
-                        <a href=""
-                            hx-get="{{ url_for('handle_like', action='unlike', post_id=post.id, source='postSearch', query=query) }}"
-                            hx-target=".containerPostSearchResults" hx-swap="innerHTML" hx-trigger="click"
+                        <a href="" hx-get="
+                            {% if tag %}
+                                {{ url_for('handle_like', action='unlike', post_id=post.id, source='postSearch', tag=tag) }}
+                            {% elif query %}
+                            {{ url_for('handle_like', action='unlike', post_id=post.id, source='postSearch', query=query) }}
+                            {% endif %}
+                            
+                            " hx-target=".containerPostSearchResults" hx-swap="innerHTML" hx-trigger="click"
                             style="margin-right: .5rem;"><i class="fa-solid fa-thumbs-up"></i></a>
                         {% else %}
-                        <a href=""
-                            hx-get="{{ url_for('handle_like', action='like', post_id=post.id, source='postSearch', query=query) }}"
-                            hx-target=".containerPostSearchResults" hx-swap="innerHTML" hx-trigger="click"
+                        <a href="" hx-get="
+                            
+                            {% if tag %}
+                                {{ url_for('handle_like', action='like', post_id=post.id, source='postSearch', tag=tag) }}
+                            {% elif query %}
+                                {{ url_for('handle_like', action='like', post_id=post.id, source='postSearch', query=query) }} 
+                            {% endif %}                           
+                            " hx-target=".containerPostSearchResults" hx-swap="innerHTML" hx-trigger="click"
                             style="margin-right: .5rem;"><i class="fa-regular fa-thumbs-up"></i></a>
                         {% endif %}
                         {% if post['comments'] %}
@@ -187,9 +216,14 @@
                             </div>
                             <div class="postCommentItems">
                                 {% if comment['author']['id'] == session["user_id"] %}
-                                <a href="" id="deleteComment"
-                                    hx-get="{{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, query=query, source='postSearch') }}"
-                                    hx-target=".containerPostSearchResults" hx-swap="innerHTML" hx-trigger="click">
+                                <a href="" id="deleteComment" hx-get="
+                                    
+                                    {% if tag %}
+                                    {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, tag=tag, source='postSearch') }}
+                                    {% elif query %}
+                                        {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, query=query, source='postSearch') }}
+                                    {% endif %}                                    
+                                    " hx-target=".containerPostSearchResults" hx-swap="innerHTML" hx-trigger="click">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                                 {% else %}
