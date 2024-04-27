@@ -43,6 +43,9 @@ class Users:
     def getFollowingPosts(self, user_id: str) -> dict:
         return requests.get(self.BASE_URL + f"/{user_id}/followingPosts").json()
     
+    def getLikedPosts(self, user_id: str) -> list:
+        return requests.get(self.BASE_URL + f"/{user_id}/likedPosts").json()
+    
     def insert(self, body: dict) -> None:
         req = requests.post(self.BASE_URL + "/insert", json=body)
 
@@ -70,6 +73,9 @@ class Posts():
     
     def findCommentsById(self, post_id: str) -> dict:
         return requests.get(self.BASE_URL + f"/{post_id}/comments").json()
+    
+    def findByTag(self, tag: str) -> list:
+        return requests.get(self.BASE_URL + f"/searchByTag?tag={tag}").json()
 
     def insert(self, user_id: str, body: dict) -> None:
         req = requests.post(self.BASE_URL + f"/insert?userId={user_id}", json=body)
