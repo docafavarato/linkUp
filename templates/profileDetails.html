@@ -52,7 +52,18 @@
     </div>
 </div>
 
-<div class="container containerProfilePosts" style="margin-top: 6rem;" id="containerProfilePosts">
+<div class="container containerProfilePostsSource navbar-nav"
+    style="display: flex; flex-direction: row; align-items: center !important; justify-content: center !important; margin-bottom: 1rem; margin-top: 5rem;">
+    <a href="{{ url_for('viewProfile', userId=userProfile.id, source='profile-posts') }}" style="margin-right: .8rem;" class="sourceHref sourcePosts">Posts</a>
+    {% if userProfile.id == session.user_id %}
+    <span class="sourceDivisor"></span>
+    <a href="{{ url_for('viewProfile', userId=userProfile.id, source='profile-liked') }}" style="margin-left: .8rem;"
+        class="sourceHref sourceLiked">Liked</a>
+    {% endif %}
+</div>
+
+
+<div class="container containerProfilePosts" style="margin-top: 0rem;" id="containerProfilePosts">
     {% for post in posts %}
     {% if post['author']['id'] == session['user_id'] %}
     <div class="modal fade postModal" tabindex="-1" id="editPost-{{ post['id'] }}" data-bs-backdrop="static"
@@ -66,7 +77,13 @@
                 <div class="modal-body">
                     <form method="post" id="editPostForm-{{ post['id'] }}" class="editPostForm"
                         style="display: flex; flex-direction: column; align-items: center; justify-content: center;"
-                        hx-post="{{ url_for('edit_post', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
+                        hx-post="
+                        {% if path_contains('profile-posts') %}
+                            {{ url_for('edit_post', post_id=post.id, source='profile-posts', user_profile_id=post.author.id) }}
+                        {% elif path_contains('profile-liked') %}
+                            {{ url_for('edit_post', post_id=post.id, source='profile-liked', user_profile_id=post.author.id) }}
+                        {% endif %}
+                        "
                         hx-target=".containerProfilePosts" hx-trigger="submit" hx-swap="innerHTML"
                         hx-encoding='multipart/form-data'>
                         <div class="mb-2" style="width: 100%;">
@@ -107,7 +124,7 @@
                                 {{ url_for('static', filename='uploads/user-images/' + post['author']['imgUrl']) }}
                             {% endif %}" width="35" height="35" style="border-radius: 55rem;">
             <div class="postHeaderData">
-                <span><a href="{{ url_for('viewProfile', userId=post['author']['id']) }}" class="profileLink">{{
+                <span><a href="{{ url_for('viewProfile', userId=post['author']['id'], source='profile-posts') }}" class="profileLink">{{
                         post['author']['name'] }}</a></span>
                 <span class="dateAgo" data-bs-toggle="tooltip" data-bs-placement="top"
                     data-bs-title="{{ post['date'] }}">{{ post["date"].replace("-", "/")
@@ -126,7 +143,12 @@
                         </li>
                         <li>
                             <a class="dropdown-item" id="deletePost"
-                                hx-post="{{ url_for('delete_post', user_profile_id=userProfile.id, post_id=post.id, source='profile') }}"
+                                    hx-post="
+                                    {% if path_contains('profile-posts') %}
+                                        {{ url_for('delete_post', user_profile_id=userProfile.id, post_id=post.id, source='profile-posts') }}
+                                    {% elif path_contains('profile-liked') %}
+                                        {{ url_for('delete_post', user_profile_id=userProfile.id, post_id=post.id, source='profile-liked') }}
+                                    {% endif %}"
                                 hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
                                 <i class="fa-solid fa-trash"></i> Delete</a>
                         </li>
@@ -169,7 +191,11 @@
                         style="width: 100%; display: flex;" data-post-id="{{ post['id'] }}"
                         data-user-id="{{ user['id'] }}" name="commentForm"
                         hx-post="
-                        {{ url_for('create_comment', post_id=post.id, source='profile', user_profile_id=post.author.id) }}" hx-target=".containerProfilePosts"
+                        {% if path_contains('profile-posts') %}
+                            {{ url_for('create_comment', post_id=post.id, source='profile-posts', user_profile_id=post.author.id) }}
+                        {% elif path_contains('profile-liked') %}
+                            {{ url_for('create_comment', post_id=post.id, source='profile-liked', user_profile_id=post.author.id) }}
+                        {% endif %}" hx-target=".containerProfilePosts"
                         hx-swap="innerHTML" hx-trigger="submit">
                         <input type="hidden" name="postId" value="{{ post['id'] }}">
                         <input class="form-control mx-auto w-auto" name="body" placeholder="Comment something">
@@ -182,12 +208,22 @@
                 <div class="postFooterReplies">
                     {% if post['id'] in user['likedPostsId'] %}
                     <a href=""
-                        hx-get="{{ url_for('handle_like', action='unlike', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
+                        hx-get="
+                        {% if path_contains('profile-posts') %}
+                            {{ url_for('handle_like', action='unlike', post_id=post.id, source='profile-posts', user_profile_id=post.author.id) }}
+                        {% elif path_contains('profile-liked') %}
+                            {{ url_for('handle_like', action='unlike', post_id=post.id, source='profile-liked', user_profile_id=post.author.id) }}
+                        {% endif %}"
                         hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click"
                         style="margin-right: .5rem;"><i class="fa-solid fa-thumbs-up"></i></a>
                     {% else %}
                     <a href=""
-                        hx-get="{{ url_for('handle_like', action='like', post_id=post.id, source='profile', user_profile_id=post.author.id) }}"
+                        hx-get="
+                        {% if path_contains('profile-posts') %}
+                            {{ url_for('handle_like', action='like', post_id=post.id, source='profile-posts', user_profile_id=post.author.id) }}
+                        {% elif path_contains('profile-liked') %}
+                            {{ url_for('handle_like', action='like', post_id=post.id, source='profile-liked', user_profile_id=post.author.id) }}
+                        {% endif %}"
                         hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click"
                         style="margin-right: .5rem;"><i class="fa-regular fa-thumbs-up"></i></a>
                     {% endif %}
@@ -225,7 +261,7 @@
                                     {{ url_for('static', filename='uploads/user-images/' + comment['author']['imgUrl']) }}
                                 {% endif %}" width="25" height="25" style="border-radius: 55rem;">
                             <span class="postCommentAuthorName"><a
-                                    href="{{ url_for('viewProfile', userId=comment['author']['id']) }}"
+                                    href="{{ url_for('viewProfile', userId=comment['author']['id'], source='profile-posts') }}"
                                     class="profileLink">{{ comment['author']['name'] }}</a></span>
                             <span style="margin-left: .5rem;" class="dateAgo" data-bs-toggle="tooltip"
                                 data-bs-placement="top" data-bs-title="{{ comment['date'] }}">{{
@@ -234,7 +270,13 @@
                         <div class="postCommentItems">
                             {% if comment['author']['id'] == session["user_id"] %}
                             <a href="" id="deleteComment"
-                                hx-get="{{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile', user_profile_id=post.author.id) }}"
+                                hx-get="
+                                {% if path_contains('profile-posts') %}
+                                    {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile-posts', user_profile_id=post.author.id) }}
+                                {% elif path_contains('profile-liked') %}
+                                    {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile-liked', user_profile_id=post.author.id) }}
+                                {% endif %}
+                                "
                                 hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
                                 <i class="fa-solid fa-trash"></i>
                             </a>
