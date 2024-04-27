@@ -109,7 +109,7 @@
 
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item"
-                                    href="{{ url_for('viewProfile', userId=session['user_id']) }}"><i
+                                    href="{{ url_for('viewProfile', userId=session['user_id'], source='profile-posts') }}"><i
                                         class="fa-solid fa-user"></i> &zwnj; View profile</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('editProfile') }}"><i
                                         class="fa-solid fa-user-pen"></i> Edit profile</a></li>
@@ -292,7 +292,7 @@
                             {% endif %}" width="35" height="35" style="border-radius: 55rem;">
                         <div class="postHeaderData">
                             <span><a
-                                    href="{{ url_for('viewProfile', userId=post['author']['id']) }}" class="profileLink">{{
+                                    href="{{ url_for('viewProfile', userId=post['author']['id'], source='profile-posts') }}" class="profileLink">{{
                                     post['author']['name'] }}</a></span>
                             <span class="dateAgo" data-bs-toggle="tooltip"
                                 data-bs-placement="top" data-bs-title="{{ post['date'] }}">{{ post["date"].replace("-", "/")
@@ -423,7 +423,7 @@
                                     {{ url_for('static', filename='uploads/user-images/' + comment['author']['imgUrl']) }}
                                 {% endif %}" width="25" height="25" style="border-radius: 55rem;">
                                         <span class="postCommentAuthorName"><a
-                                                href="{{ url_for('viewProfile', userId=comment['author']['id']) }}"
+                                                href="{{ url_for('viewProfile', userId=comment['author']['id'], source='profile-posts') }}"
                                                 class="profileLink">{{ comment['author']['name'] }}</a></span>
                                         <span style="margin-left: .5rem;" class="dateAgo" data-bs-toggle="tooltip"
                                             data-bs-placement="top" data-bs-title="{{ comment['date'] }}">{{

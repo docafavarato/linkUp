@@ -10,7 +10,7 @@
                 style="border-radius: 55rem; margin-top: 1.1rem; margin-right: 1rem;">
         </div>
         <div class="profileTexts">
-            <a href="{{ url_for('viewProfile', userId=userProfile['id']) }}" class="profileName"
+            <a href="{{ url_for('viewProfile', userId=userProfile['id'], source='profile-posts') }}" class="profileName"
                 style="text-decoration: none;">{{ userProfile["name"] }}</a>
             <span class="profileDesc">
                 <div class="profileDescText">
