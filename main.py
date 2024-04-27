@@ -36,13 +36,13 @@ def get_post_template():
     post = user_api.findPostsByUserId(user["id"], order_by_date=True)[0]
     return render_template("base-post.html", post=post, user=user, path_contains=path_contains)
 
-def get_posts_by_user_id_template(user_id, source=None):
+def get_posts_by_user_id_template(user_id, source):
     user = user_api.findById(session["user_id"])
     match source:
         case "profile-posts":
             posts = user_api.findPostsByUserId(user_id, order_by_date=True)
         case "profile-liked":
-            posts = user_api.getLikedPosts(user_id)
+            posts = user_api.getLikedPosts(session["user_id"])
     return render_template("base-posts-profile.html", posts=posts, user=user, path_contains=path_contains, userProfileId=user_id)
 
 def get_posts_template(source="all"):
@@ -158,7 +158,7 @@ def create_comment(post_id, source, user_profile_id=None, query=None, tag=None):
         case "all" | "following":
             return get_posts_template(source)
         case "profile-posts" | "profile-liked":
-            return get_posts_by_user_id_template(user_profile_id, source=source)
+            return get_posts_by_user_id_template(user_id=user_profile_id, source=source)
         case "postSearch":
             if query:
                 return get_posts_search_template(query=query)
