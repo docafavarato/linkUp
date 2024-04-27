@@ -36,9 +36,13 @@ def get_post_template():
     post = user_api.findPostsByUserId(user["id"], order_by_date=True)[0]
     return render_template("base-post.html", post=post, user=user, path_contains=path_contains)
 
-def get_posts_by_user_id_template(user_id):
+def get_posts_by_user_id_template(user_id, source=None):
     user = user_api.findById(session["user_id"])
-    posts = user_api.findPostsByUserId(user_id, order_by_date=True)
+    match source:
+        case "profile-posts":
+            posts = user_api.findPostsByUserId(user_id, order_by_date=True)
+        case "profile-liked":
+            posts = user_api.getLikedPosts(user_id)
     return render_template("base-posts-profile.html", posts=posts, user=user, path_contains=path_contains, userProfileId=user_id)
 
 def get_posts_template(source="all"):
@@ -134,8 +138,8 @@ def delete_post(post_id, source, user_profile_id=None, query=None, tag=None):
     match source:
         case "all" | "following":
             return get_posts_template(source)
-        case "profile":
-            return get_posts_by_user_id_template(user_profile_id)
+        case "profile-posts" | "profile-liked":
+            return get_posts_by_user_id_template(user_profile_id, source=source)
         case "postSearch":
             if query:
                 return get_posts_search_template(query=query)
@@ -153,8 +157,8 @@ def create_comment(post_id, source, user_profile_id=None, query=None, tag=None):
     match source:
         case "all" | "following":
             return get_posts_template(source)
-        case "profile":
-            return get_posts_by_user_id_template(user_profile_id)
+        case "profile-posts" | "profile-liked":
+            return get_posts_by_user_id_template(user_profile_id, source=source)
         case "postSearch":
             if query:
                 return get_posts_search_template(query=query)
@@ -170,8 +174,8 @@ def delete_comment(post_id, comment_id, source, user_profile_id=None, query=None
     match source:
         case "all" | "following":
             return get_posts_template(source)
-        case "profile":
-            return get_posts_by_user_id_template(user_profile_id)
+        case "profile-posts" | "profile-liked":
+            return get_posts_by_user_id_template(user_profile_id, source=source)
         case "postSearch":
             if query:
                 return get_posts_search_template(query=query)
@@ -193,8 +197,8 @@ def handle_like(action, post_id, source, user_profile_id=None, query=None, tag=N
     match source:
         case "all" | "following":
             return get_posts_template(source)
-        case "profile":
-            return get_posts_by_user_id_template(user_profile_id)
+        case "profile-posts" | "profile-liked":
+            return get_posts_by_user_id_template(user_profile_id, source=source)
         case "postSearch":
             if query:
                 return get_posts_search_template(query=query)
@@ -222,7 +226,7 @@ def handle_follow(action, other_id, source=None, query=None):
 @app.route("/edit-post/<post_id>/<user_profile_id>/source=<source>", methods=["POST"])
 @app.route("/edit-post/<post_id>/query=<query>/source=<source>", methods=["POST"])
 @app.route("/edit-post/<post_id>/tag=<tag>/source=<source>", methods=["POST"])
-def edit_post(post_id, source="all", user_profile_id=None, query=None, tag=None):
+def edit_post(post_id, source, user_profile_id=None, query=None, tag=None):
     title = request.form.get("title")
     body = request.form.get("body")
 
@@ -244,8 +248,8 @@ def edit_post(post_id, source="all", user_profile_id=None, query=None, tag=None)
         match source:
             case "all" | "following":
                 return get_posts_template(source)
-            case "profile":
-                return get_posts_by_user_id_template(user_profile_id)
+            case "profile-posts" | "profile-liked":
+                return get_posts_by_user_id_template(user_profile_id, source=source)
             case "postSearch":
                 if query:
                     return get_posts_search_template(query=query)
@@ -387,14 +391,20 @@ def editProfile():
                         return redirect(url_for("search_posts", query=query))
 
 
-@app.route("/profiles/<userId>", methods=["GET", "POST"])
-def viewProfile(userId):
+@app.route("/profiles/<userId>/source=<source>", methods=["GET", "POST"])
+def viewProfile(userId, source):
     user = user_api.findById(session["user_id"])
     userProfile = user_api.findById(userId)
     posts = user_api.findPostsByUserId(userId, order_by_date=True)
+    match source:
+        case "profile-posts":
+            posts = user_api.findPostsByUserId(userId, order_by_date=True)
+        case "profile-liked":
+            posts = user_api.getLikedPosts(user_id=userId)
+
     if request.method == "GET":
         return render_template("profileDetails.html", userProfile=userProfile,
-                               user=user, posts=posts)
+                               user=user, posts=posts, path_contains=path_contains)
     elif request.method == "POST":
         if "searchForm" in request.form:
             option = request.form.get("flexRadioDefault")
