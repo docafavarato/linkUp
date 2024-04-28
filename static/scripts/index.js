@@ -102,15 +102,21 @@ window.onload = function () {
     addDateMask(dateInput);
 };
 
+function loadToolTips() {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+}
+
+
 $(document).ready(function () {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    loadToolTips();
+    document.addEventListener('htmx:afterSwap', function (event) {
+        loadToolTips();
+    });
 });
 
 $("#fileInput").change(function () {
     filename = this.files[0].name;
-    console.log("Mudou");
-    console.log(filename);
 });
 
 
@@ -136,6 +142,10 @@ $(document).ready(function () {
         document.querySelector(".sourceAll").classList.add("current");
     } else if (currentUrl.includes("/source%3Dfollowing")) {
         document.querySelector(".sourceFollowing").classList.add("current");
+    } else if (currentUrl.includes("/source%3Dprofile-posts")) {
+        document.querySelector(".sourcePosts").classList.add("current");
+    } else if (currentUrl.includes("/source%3Dprofile-liked")) {
+        document.querySelector(".sourceLiked").classList.add("current");
     }
 
     var realInput = document.getElementById("postImageFile");
