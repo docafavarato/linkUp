@@ -1,230 +1,225 @@
 {% for post in posts %}
-    {% if post['author']['id'] == session['user_id'] %}
-    <div class="modal fade postModal" tabindex="-1" id="editPost-{{ post['id'] }}" data-bs-backdrop="static"
-        data-bs-keyboard="false" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit post</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="post" id="editPostForm-{{ post['id'] }}" class="editPostForm"
-                        style="display: flex; flex-direction: column; align-items: center; justify-content: center;"
-                        hx-post="
+{% if post['author']['id'] == session['user_id'] %}
+<div class="modal fade postModal" tabindex="-1" id="editPost-{{ post['id'] }}" data-bs-backdrop="static"
+    data-bs-keyboard="false" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="editPostForm-{{ post['id'] }}" class="editPostForm"
+                    style="display: flex; flex-direction: column; align-items: center; justify-content: center;"
+                    hx-post="
                         {% if path_contains('profile-posts') %}
                             {{ url_for('edit_post', post_id=post.id, source='profile-posts', user_profile_id=post.author.id) }}
                         {% elif path_contains('profile-liked') %}
                             {{ url_for('edit_post', post_id=post.id, source='profile-liked', user_profile_id=post.author.id) }}
                         {% endif %}
-                        "
-                        hx-target=".containerProfilePosts" hx-trigger="submit" hx-swap="innerHTML"
-                        hx-encoding='multipart/form-data'>
-                        <div class="mb-2" style="width: 100%;">
-                            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="title"
-                                name="title" value="{{ post['title'] }}" type="text" maxlength="60">
-                        </div>
-                        <div class="mb-3" style="width: 100%;">
-                            <textarea class="form-control" name="body"
-                                style="width: 100%;">{{ post['body'] }}</textarea>
-                        </div>
-                        <div class="mb-3" style="display: flex; flex-direction: column; align-items: flex-start;">
-                            <button type="button" class="form-control mx-auto w-auto editPostImageFileButton"
-                                placeholder="Select an image" id="editPostImageFileButton-{{ post.id }}"
-                                onclick="handleEditPostImageInput('{{ post.id }}');">
-                                <i class="fa-solid fa-cloud-arrow-up"></i>
-                                Select or drop an image
-                            </button>
-                            <input class="form-control editPostImageFile" type="file"
-                                id="editPostImageFile-{{ post.id }}" name="editPostImageFile" style="display: none;"
-                                accept="image/png, image/jpg, image/jpeg">
-                            <input style="display: none;" value="{{ post.imgUrl }}" name="previousImgUrl">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" type="submit" form="editPostForm-{{ post['id'] }}"
-                        name="editPostForm" data-bs-dismiss="modal">Edit</button>
-                </div>
+                        " hx-target=".containerProfilePosts" hx-trigger="submit" hx-swap="innerHTML"
+                    hx-encoding='multipart/form-data'>
+                    <div class="mb-2" style="width: 100%;">
+                        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="title" name="title"
+                            value="{{ post['title'] }}" type="text" maxlength="60">
+                    </div>
+                    <div class="mb-3" style="width: 100%;">
+                        <textarea class="form-control" name="body" style="width: 100%;">{{ post['body'] }}</textarea>
+                    </div>
+                    <div class="mb-3" style="display: flex; flex-direction: column; align-items: flex-start;">
+                        <button type="button" class="form-control mx-auto w-auto editPostImageFileButton"
+                            placeholder="Select an image" id="editPostImageFileButton-{{ post.id }}"
+                            onclick="handleEditPostImageInput('{{ post.id }}');">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            Select or drop an image
+                        </button>
+                        <input class="form-control editPostImageFile" type="file" id="editPostImageFile-{{ post.id }}"
+                            name="editPostImageFile" style="display: none;" accept="image/png, image/jpg, image/jpeg">
+                        <input style="display: none;" value="{{ post.imgUrl }}" name="previousImgUrl">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" type="submit" form="editPostForm-{{ post['id'] }}"
+                    name="editPostForm" data-bs-dismiss="modal">Edit</button>
             </div>
         </div>
     </div>
-    {% endif %}
-    <div class="container containerPosts">
-        <div class="postHeader" style="margin-top: .5rem;">
-            <img class="circle-img" src="{% if not post['author']['imgUrl'] %}
+</div>
+{% endif %}
+<div class="container containerPosts">
+    <div class="postHeader" style="margin-top: .5rem;">
+        <img class="circle-img" src="{% if not post['author']['imgUrl'] %}
                                     https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                             {% else %}
                                 {{ url_for('static', filename='uploads/user-images/' + post['author']['imgUrl']) }}
                             {% endif %}" width="35" height="35" style="border-radius: 55rem;">
-            <div class="postHeaderData">
-                <span><a href="{{ url_for('viewProfile', userId=post['author']['id'], source='profile-posts') }}" class="profileLink">{{
-                        post['author']['name'] }}</a></span>
-                <span class="dateAgo" data-bs-toggle="tooltip" data-bs-placement="top"
-                    data-bs-title="{{ post['date'] }}">{{ post["date"].replace("-", "/")
-                    | time_passed }}</span>
-            </div>
+        <div class="postHeaderData">
+            <span><a href="{{ url_for('viewProfile', userId=post['author']['id'], source='profile-posts') }}"
+                    class="profileLink">{{
+                    post['author']['name'] }}</a></span>
+            <span class="dateAgo" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ post['date'] }}">{{
+                post["date"].replace("-", "/")
+                | time_passed }}</span>
+        </div>
 
-            {% if post["author"]["id"] == session["user_id"] %}
-            <div class="postHeaderItems">
-                <div class="dropdown postHeaderDropdown dropend">
-                    <button style="border: none; background-color: inherit;" class="post-options-toggle" type="button"
-                        data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-ellipsis"></i></button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editPost-{{ post['id'] }}"
-                                href="" id="editPost"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" id="deletePost"
-                                    hx-post="
+        {% if post["author"]["id"] == session["user_id"] %}
+        <div class="postHeaderItems">
+            <div class="dropdown postHeaderDropdown dropend">
+                <button style="border: none; background-color: inherit;" class="post-options-toggle" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-ellipsis"></i></button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editPost-{{ post['id'] }}"
+                            href="" id="editPost"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" id="deletePost" hx-post="
                                     {% if path_contains('profile-posts') %}
                                         {{ url_for('delete_post', user_profile_id=userProfileId, post_id=post.id, source='profile-posts') }}
                                     {% elif path_contains('profile-liked') %}
                                         {{ url_for('delete_post', user_profile_id=userProfileId, post_id=post.id, source='profile-liked') }}
-                                    {% endif %}"
-                                hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
-                                <i class="fa-solid fa-trash"></i> Delete</a>
-                        </li>
-                    </ul>
-                </div>
+                                    {% endif %}" hx-target=".containerProfilePosts" hx-swap="innerHTML"
+                            hx-trigger="click">
+                            <i class="fa-solid fa-trash"></i> Delete</a>
+                    </li>
+                </ul>
             </div>
-            {% endif %}
         </div>
-        <div class="postBody" style="width: 100%;">
-            <span class="postTitle"><b>{{ post["title"] }}</b></span>
-            <span class="postBodyText">{{ post["body"] }}</span>
-            {% if post.imgUrl and not post.imgUrl == "None" %}
-            <div class="postImageDiv"
-                style="margin-top: 1rem; width: 100%; display: flex; align-items: center !important; justify-content: center !important;">
-                <img src="{{ url_for('static', filename='uploads/post-images/' + post.imgUrl) }}"
-                    style="max-width: 100%; min-height: 100%; max-height: 100%;">
-            </div>
-            {% endif %}
+        {% endif %}
+    </div>
+    <div class="postBody" style="width: 100%;">
+        <span class="postTitle"><b>{{ post["title"] }}</b></span>
+        <span class="postBodyText">{{ post["body"] }}</span>
+        {% if post.imgUrl and not post.imgUrl == "None" %}
+        <div class="postImageDiv"
+            style="margin-top: 1rem; width: 100%; display: flex; align-items: center !important; justify-content: center !important;">
+            <img src="{{ url_for('static', filename='uploads/post-images/' + post.imgUrl) }}"
+                style="max-width: 100%; min-height: 100%; max-height: 100%;">
         </div>
-        <div class="postFooter">
-            <div class="divisor"></div>
-            {% if post.tags %}
-            <div class="postTags">
-                {% for tag in post.tags %}
-                <a href="{{ url_for('search_posts', tag=tag) }}" class="btn btn-outline-primary postTag">{{ tag }}</a>
-                {% endfor %}
-            </div>
-            {% endif %}
-            <div class="postFooterItems">
-                <div class="postFooterCommentInput">
-                    {% if not user["imgUrl"] %}
-                    <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
-                        width="36" height="36" style="border-radius: 55rem; margin-right: .5rem;">
-                    {% else %}
-                    <img class="circle-img"
-                        src="{{ url_for('static', filename='uploads/user-images/' + user['imgUrl']) }}" width="36"
-                        height="36" style="border-radius: 55rem; margin-right: .5rem;">
-                    {% endif %}
-                    <form class="commentForm" method="post" id="commentForm-{{ post['id'] }}"
-                        style="width: 100%; display: flex;" data-post-id="{{ post['id'] }}"
-                        data-user-id="{{ user['id'] }}" name="commentForm"
-                        hx-post="
+        {% endif %}
+    </div>
+    <div class="postFooter">
+        <div class="divisor"></div>
+        {% if post.tags %}
+        <div class="postTags">
+            {% for tag in post.tags %}
+            <a href="{{ url_for('search_posts', tag=tag) }}" class="btn btn-outline-primary postTag">{{ tag }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="postFooterItems">
+            <div class="postFooterCommentInput">
+                {% if not user["imgUrl"] %}
+                <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                    width="36" height="36" style="border-radius: 55rem; margin-right: .5rem;">
+                {% else %}
+                <img class="circle-img" src="{{ url_for('static', filename='uploads/user-images/' + user['imgUrl']) }}"
+                    width="36" height="36" style="border-radius: 55rem; margin-right: .5rem;">
+                {% endif %}
+                <form class="commentForm" method="post" id="commentForm-{{ post['id'] }}"
+                    style="width: 100%; display: flex;" data-post-id="{{ post['id'] }}" data-user-id="{{ user['id'] }}"
+                    name="commentForm" hx-post="
                         {% if path_contains('profile-posts') %}
                             {{ url_for('create_comment', post_id=post.id, source='profile-posts', user_profile_id=post.author.id) }}
                         {% elif path_contains('profile-liked') %}
                             {{ url_for('create_comment', post_id=post.id, source='profile-liked', user_profile_id=post.author.id) }}
-                        {% endif %}" hx-target=".containerProfilePosts"
-                        hx-swap="innerHTML" hx-trigger="submit">
-                        <input type="hidden" name="postId" value="{{ post['id'] }}">
-                        <input class="form-control mx-auto w-auto" name="body" placeholder="Comment something">
-                        <button name="commentForm" type="submit"
-                            style="border: none; background-color: inherit; margin-left: .5rem;"><i
-                                class="fa-solid fa-paper-plane commentButton"
-                                id="submit-commentForm-{{ post['id'] }}"></i></button>
-                    </form>
-                </div>
-                <div class="postFooterReplies">
-                    {% if post['id'] in user['likedPostsId'] %}
-                    <a href=""
-                        hx-get="
+                        {% endif %}" hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="submit">
+                    <input type="hidden" name="postId" value="{{ post['id'] }}">
+                    <input class="form-control mx-auto w-auto" name="body" placeholder="Comment something">
+                    <button name="commentForm" type="submit"
+                        style="border: none; background-color: inherit; margin-left: .5rem;"><i
+                            class="fa-solid fa-paper-plane commentButton"
+                            id="submit-commentForm-{{ post['id'] }}"></i></button>
+                </form>
+            </div>
+            <div class="postFooterReplies">
+                {% if post['id'] in user['likedPostsId'] %}
+                <a href="" hx-get="
                         {% if path_contains('profile-posts') %}
                             {{ url_for('handle_like', action='unlike', post_id=post.id, source='profile-posts', user_profile_id=post.author.id) }}
                         {% elif path_contains('profile-liked') %}
                             {{ url_for('handle_like', action='unlike', post_id=post.id, source='profile-liked', user_profile_id=post.author.id) }}
-                        {% endif %}"
-                        hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click"
-                        style="margin-right: .5rem;"><i class="fa-solid fa-thumbs-up"></i></a>
-                    {% else %}
-                    <a href=""
-                        hx-get="
+                        {% endif %}" hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click"
+                    style="margin-right: .5rem;"><i class="fa-solid fa-thumbs-up"></i></a>
+                {% else %}
+                <a href="" hx-get="
                         {% if path_contains('profile-posts') %}
                             {{ url_for('handle_like', action='like', post_id=post.id, source='profile-posts', user_profile_id=post.author.id) }}
                         {% elif path_contains('profile-liked') %}
                             {{ url_for('handle_like', action='like', post_id=post.id, source='profile-liked', user_profile_id=post.author.id) }}
-                        {% endif %}"
-                        hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click"
-                        style="margin-right: .5rem;"><i class="fa-regular fa-thumbs-up"></i></a>
-                    {% endif %}
-                    {% if post['comments'] %}
-                    <a style="margin-right: .5rem;" data-bs-toggle="collapse" href="#post-{{ post['id'] }}"
-                        class="viewReplies" onclick="toggleText(this)">
-                        {% if post['comments']|length > 1 %}
-                        View {{ post['comments']|length }} replies
-                        {% else %}
-                        View 1 reply
-                        {% endif %}
-                    </a>
+                        {% endif %}" hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click"
+                    style="margin-right: .5rem;"><i class="fa-regular fa-thumbs-up"></i></a>
+                {% endif %}
+                {% if post['comments'] %}
+                <a style="margin-right: .5rem;" data-bs-toggle="collapse" href="#post-{{ post['id'] }}"
+                    class="viewReplies" onclick="toggleText(this)">
+                    {% if post['comments']|length > 1 %}
+                    View {{ post['comments']|length }} replies
                     {% else %}
+                    View 1 reply
                     {% endif %}
-                    {% if post['usersThatLiked'] %}
-                    <span class="likeAmount" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
-                        data-bs-title="{% for user in post['usersThatLiked'] %} {{ user['name']}}<br>{% endfor %}">
-                        {% if post['usersThatLiked']|length > 1 %}
-                        {{ post['usersThatLiked']|length }} likes
-                        {% elif post['usersThatLiked']|length < 1 %} {{ post['usersThatLiked']|length }} likes {% else
-                            %} 1 like {% endif %} </span>
-                            {% else %}
-                            {% endif %}
-                </div>
+                </a>
+                {% else %}
+                {% endif %}
+                {% if post['usersThatLiked'] %}
+                <span class="likeAmount" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+                    data-bs-title="{% for user in post['usersThatLiked'] %} {{ user['name']}}<br>{% endfor %}">
+                    {% if post['usersThatLiked']|length > 1 %}
+                    {{ post['usersThatLiked']|length }} likes
+                    {% elif post['usersThatLiked']|length < 1 %} {{ post['usersThatLiked']|length }} likes {% else %} 1
+                        like {% endif %} </span>
+                        {% else %}
+                        {% endif %}
             </div>
-            {% if post['comments'] %}
-            <div class="collapse postComments" id="post-{{ post['id'] }}">
-                {% for comment in post['comments']|reverse %}
-                <div class="postComment">
-                    <div class="postCommentHeader">
-                        <div class="postCommentAuthorInfo">
-                            <img class="circle-img-small commentImage" src="{% if not comment['author']['imgUrl'] %}
+        </div>
+        {% if post['comments'] %}
+        <div class="collapse postComments" id="post-{{ post['id'] }}">
+            {% for comment in post['comments']|reverse %}
+            <div class="postComment">
+                <div class="postCommentHeader">
+                    <div class="postCommentAuthorInfo">
+                        <img class="circle-img-small commentImage" src="{% if not comment['author']['imgUrl'] %}
                                         https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png
                                 {% else %}
                                     {{ url_for('static', filename='uploads/user-images/' + comment['author']['imgUrl']) }}
                                 {% endif %}" width="25" height="25" style="border-radius: 55rem;">
-                            <span class="postCommentAuthorName"><a
-                                    href="{{ url_for('viewProfile', userId=comment['author']['id'], source='profile-posts') }}"
-                                    class="profileLink">{{ comment['author']['name'] }}</a></span>
-                            <span style="margin-left: .5rem;" class="dateAgo" data-bs-toggle="tooltip"
-                                data-bs-placement="top" data-bs-title="{{ comment['date'] }}">{{
-                                comment["date"].replace("-", "/") | time_passed }}</span>
-                        </div>
+                        <span class="postCommentAuthorName"><a
+                                href="{{ url_for('viewProfile', userId=comment['author']['id'], source='profile-posts') }}"
+                                class="profileLink">{{ comment['author']['name'] }}</a></span>
+                        <span style="margin-left: .5rem;" class="dateAgo" data-bs-toggle="tooltip"
+                            data-bs-placement="top" data-bs-title="{{ comment['date'] }}">{{
+                            comment["date"].replace("-", "/") | time_passed }}</span>
+                    </div>
+                        {% if comment['author']['id'] == session["user_id"] %}
                         <div class="postCommentItems">
-                            {% if comment['author']['id'] == session["user_id"] %}
-                            <a href="" id="deleteComment"
-                                hx-get="
-                                {% if path_contains('profile-posts') %}
-                                    {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile-posts', user_profile_id=post.author.id) }}
-                                {% elif path_contains('profile-liked') %}
-                                    {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile-liked', user_profile_id=post.author.id) }}
-                                {% endif %}
-                                "
-                                hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
-                            {% else %}
-                            {% endif %}
+                            <div class="dropdown postHeaderDropdown dropend">
+                                <button id="commentOptions" style="border: none; background-color: inherit;" class="post-options-toggle"
+                                    type="button" data-bs-toggle="dropdown" aria-expanded="false"><i
+                                        class="fa-solid fa-ellipsis"></i></button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" id="deleteComment" hx-get="
+                                        {% if path_contains('profile-posts') %}
+                                            {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile-posts', user_profile_id=post.author.id) }}
+                                        {% elif path_contains('profile-liked') %}
+                                            {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile-liked', user_profile_id=post.author.id) }}
+                                        {% endif %}
+                                        " hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
+                                            <i class="fa-solid fa-trash"></i> Delete</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <div class="postCommentContent">
-                        <span class="postCommentBody">{{ comment['body'] }}</span>
-                    </div>
+                        {% endif %}
                 </div>
-                {% endfor %}
+                <div class="postCommentContent">
+                    <span class="postCommentBody">{{ comment['body'] }}</span>
+                </div>
             </div>
-            {% endif %}
+            {% endfor %}
         </div>
+        {% endif %}
     </div>
-    {% endfor %}
+</div>
+{% endfor %}

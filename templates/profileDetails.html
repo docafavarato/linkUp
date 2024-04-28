@@ -267,22 +267,28 @@
                                 data-bs-placement="top" data-bs-title="{{ comment['date'] }}">{{
                                 comment["date"].replace("-", "/") | time_passed }}</span>
                         </div>
-                        <div class="postCommentItems">
                             {% if comment['author']['id'] == session["user_id"] %}
-                            <a href="" id="deleteComment"
-                                hx-get="
-                                {% if path_contains('profile-posts') %}
-                                    {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile-posts', user_profile_id=post.author.id) }}
-                                {% elif path_contains('profile-liked') %}
-                                    {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile-liked', user_profile_id=post.author.id) }}
-                                {% endif %}
-                                "
-                                hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
-                            {% else %}
+                            <div class="postCommentItems">
+                                <div class="dropdown postHeaderDropdown dropend">
+                                    <button id="commentOptions" style="border: none; background-color: inherit;" class="post-options-toggle"
+                                        type="button" data-bs-toggle="dropdown" aria-expanded="false"><i
+                                            class="fa-solid fa-ellipsis"></i></button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" id="deleteComment" hx-get="
+                                            {% if path_contains('profile-posts') %}
+                                                {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile-posts', user_profile_id=post.author.id) }}
+                                            {% elif path_contains('profile-liked') %}
+                                                {{ url_for('delete_comment', post_id=post.id, comment_id=comment.id, source='profile-liked', user_profile_id=post.author.id) }}
+                                            {% endif %}
+                                            "
+                                            hx-target=".containerProfilePosts" hx-swap="innerHTML" hx-trigger="click">
+                                                <i class="fa-solid fa-trash"></i> Delete</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                             {% endif %}
-                        </div>
                     </div>
                     <div class="postCommentContent">
                         <span class="postCommentBody">{{ comment['body'] }}</span>
