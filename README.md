@@ -22,8 +22,8 @@
     - ### Posting
         - Users can create, edit and delete their posts.
 
-          ![image](https://github.com/docafavarato/linkUp/assets/98183878/8ea49fe6-fb62-4ab2-9683-80f3a68695a5)
-
+          ![image](https://github.com/docafavarato/linkUp/assets/98183878/a7847f43-7c9a-4bbb-a99e-b50bd9979959)
+          
     - ### Commenting
         - Users can reply to any post, and can also delete their replies.
     - ### Liking
@@ -36,19 +36,19 @@
           ![image](https://github.com/docafavarato/linkUp/assets/98183878/7f9b0626-c878-4786-87b9-04298fbb971b)
           
      - ### Searching
-    	 - Users are able to search for posts (title, body or content in any of the comments) and other users.
+    	 - Users are able to search for posts (tags, title, body or content in any of the comments) and other users.
 
-  	       ![image](https://github.com/docafavarato/linkUp/assets/98183878/c948f4ac-060d-4323-9903-ead4c0cb9bdc)
-		   ![image](https://github.com/docafavarato/linkUp/assets/98183878/deeb1423-a449-4bd2-a016-2b57138a3674)
-           ![image](https://github.com/docafavarato/linkUp/assets/98183878/d11d8f0f-d58c-4cd4-8bb8-420f7a777ef6)
+  	   ![image](https://github.com/docafavarato/linkUp/assets/98183878/f6543dad-5e54-4e5e-83bb-a504a4279ad4)
+	   ![image](https://github.com/docafavarato/linkUp/assets/98183878/f204785d-0f3d-4411-987c-1498bf2f7de5)
+	   ![image](https://github.com/docafavarato/linkUp/assets/98183878/9c4238af-dba0-42fb-89dc-38ab2fb120a5)
+           ![image](https://github.com/docafavarato/linkUp/assets/98183878/de30a533-9def-4962-ad01-fef487b699c8)
 
 - ## User profile
     - Each user has a dynamic page based on his ID that displays his profile.
     - The profile pages shows the user infos, such as his name, his profile description, his birth date, his image, his followers/following amount and all the posts that were made by him.
-
-      `/profiles/660b286b83c1b05a6290c8f2`
+    - Users are able to see all the posts they liked.
       
-      ![image](https://github.com/docafavarato/linkUp/assets/98183878/bcd2ca59-b93b-4aff-83e3-bbceb741e7bf)
+      ![image](https://github.com/docafavarato/linkUp/assets/98183878/46de5eb2-2cdb-468c-8f38-8a3f069190f9)
 
     - Users can edit all of their profile informations:
 
@@ -56,9 +56,9 @@
 
 # Post related
 - ## Post structure
-    - A post contains an author, a creation date, a title, a body, an image (optional) a list of comments and a list of users who liked it. Users can show or hide the replies.
+    - A post contains an author, a creation date, a title, a body, an image (optional), a list of tags (also optional), a list of comments and a list of users who liked it. Users can show or hide the replies.
       
-      ![image](https://github.com/docafavarato/linkUp/assets/98183878/a7b0c85c-aac8-4c50-a078-b0eaaa233549)
+      ![image](https://github.com/docafavarato/linkUp/assets/98183878/afef68ce-c6d7-47c4-b2a7-2ecd9486d1d9)
 
     - Users are able to see the exact date that a post was created by hovering over the approximate date:
       
@@ -72,8 +72,8 @@
 - ## Comment structure
   - A comment contains an author, a creation date and a content. Users are able to delete their comments.
 
-    ![image](https://github.com/docafavarato/linkUp/assets/98183878/ff658467-735e-49bb-9cb0-a775007e41f8)
+    ![image](https://github.com/docafavarato/linkUp/assets/98183878/20b3d776-06f6-4d98-a9c2-6a2e9534544e)
 
   - Users are able to see the exact date that a comment was made by hovering over the approximate date:
 
-    ![image](https://github.com/docafavarato/linkUp/assets/98183878/9099038a-91fa-478b-8e67-06a63b14146d)
+    ![image](https://github.com/docafavarato/linkUp/assets/98183878/dfd46f62-8d02-4c8b-bec9-73f8206069b8)
