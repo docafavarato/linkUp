@@ -26,6 +26,7 @@
         <div class="mb-3 form-floating">
             <input class="form-control mx-auto w-auto" name="file" type="file">
             <label for="floatingInputValue">Image</label>
+            <input style="display: none;" value="{{ user.imgUrl }}" name="previousImgUrl">
         </div>
         <div class="mb-3 form-floating">
             <input class="form-control mx-auto w-auto" id="description" name="description" value="{{ user['description'] }}" type="text" placeholder="Description">

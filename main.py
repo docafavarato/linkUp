@@ -366,18 +366,37 @@ def editProfile():
             description = request.form.get("description")
             birthDate = request.form.get("birthDate")
             imgFile = request.files["file"]
+            previousImgUrl = request.form.get("previousImgUrl")
+            
+            if imgFile:
+                if allowed_file(imgUrl):
+                    filename = session["user_id"] + "." + imgFile.filename.split(".")[1]
+                    imgFile.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
-            if allowed_file(imgUrl):
-                filename = session["user_id"] + "." + imgFile.filename.split(".")[1]
-                imgFile.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-
-            user_api.edit(session["user_id"], body={"name": username,
-                                                    "email": email,
-                                                    "password": password,
-                                                    "imgUrl": filename,
-                                                    "description": description,
-                                                    "birthDate": birthDate
-                                                    })
+                user_api.edit(session["user_id"], body={"name": username,
+                                                        "email": email,
+                                                        "password": password,
+                                                        "imgUrl": filename,
+                                                        "description": description,
+                                                        "birthDate": birthDate
+                                                        })
+            else:
+                if previousImgUrl != "None":
+                    user_api.edit(session["user_id"], body={"name": username,
+                                                            "email": email,
+                                                            "password": password,
+                                                            "description": description,
+                                                            "birthDate": birthDate,
+                                                            "imgUrl": previousImgUrl
+                                                            })
+                else:
+                    user_api.edit(session["user_id"], body={"name": username,
+                                                            "email": email,
+                                                            "password": password,
+                                                            "description": description,
+                                                            "birthDate": birthDate,
+                                                            })
+                    
             return redirect(url_for("index", source="all"))
 
         elif "searchForm" in request.form:
