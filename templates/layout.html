@@ -202,7 +202,7 @@
                 <a href="{{ url_for('index', source='all') }}" style="margin-right: .8rem;"
                     class="sourceHref sourceAll">All</a>
                 <span class="sourceDivisor"></span>
-                <a href="{{ url_for('index', source='following') }}" style="margin-left: .8rem;"
+                <a href="{{ url_for('index', source='following') }}" style="margin-left: .8rem;;"
                     class="sourceHref sourceFollowing">Following</a>
             </div>
 
@@ -390,7 +390,7 @@
                                 {% endif %}
                                 {% if post['comments'] %}
                                 <a style="margin-right: .5rem;" data-bs-toggle="collapse" href="#post-{{ post['id'] }}"
-                                    class="viewReplies" onclick="toggleText(this)">
+                                    class="viewReplies" onclick="toggleText(this)" id="viewReplies-{{ post['id'] }}">
                                     {% if post['comments']|length > 1 %}
                                     View {{ post['comments']|length }} replies
                                     {% else %}
