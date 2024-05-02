@@ -437,7 +437,7 @@ def viewProfile(userId, source):
 
 @app.template_filter('time_passed')
 def time_passed_filter(date_string):
-    date = datetime.strptime(date_string, "%d/%m/%Y %H:%M:%S")
+    date = datetime.strptime(date_string, "%m/%d/%Y %H:%M:%S")
     now = datetime.now()
     difference = now - date
     days = difference.days
