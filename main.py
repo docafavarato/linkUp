@@ -89,6 +89,9 @@ def index(source):
                 posts = post_api.findAllOrderByDateDesc()
             case "following":
                 posts = user_api.getFollowingPosts(session["user_id"])
+            case "trending":
+                tags = tag_api.findTrending(limit=100)
+                return render_template("trending.html", user=user, tags=tags, path_contains=path_contains)
             case _:
                 posts = post_api.findAllOrderByDateDesc()
             

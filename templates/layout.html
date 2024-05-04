@@ -209,11 +209,14 @@
                 <a href="{{ url_for('index', source='all') }}" style="margin-right: .8rem;"
                     class="sourceHref sourceAll">All</a>
                 <span class="sourceDivisor"></span>
-                <a href="{{ url_for('index', source='following') }}" style="margin-left: .8rem;;"
+                <a href="{{ url_for('index', source='following') }}" style="margin-left: .8rem; margin-right: .8rem;"
                     class="sourceHref sourceFollowing">Following</a>
+                <span class="sourceDivisor"></span>
+                <a href="{{ url_for('index', source='trending') }}" style="margin-left: .8rem;"
+                    class="sourceHref sourceTrending">Trending</a>
             </div>
 
-            {% if not posts %}
+            {% if not posts and not path_contains('source=trending') %}
             <div class="container">No posts here.</div>
             {% else %}
 
@@ -348,7 +351,8 @@
                         {% if post.tags %}
                         <div class="postTags">
                             {% for tag in post.tags %}
-                            <a href="{{ url_for('search_posts', tag=tag.name) }}" class="btn btn-outline-primary postTag">{{
+                            <a href="{{ url_for('search_posts', tag=tag.name) }}"
+                                class="btn btn-outline-primary postTag">{{
                                 tag.name }}</a>
                             {% endfor %}
                         </div>
