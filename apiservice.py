@@ -98,3 +98,6 @@ class Tags:
     
     def findByName(self, name: str) -> dict:
         return requests.get(self.BASE_URL + f"/search?name={name}").json()
+    
+    def findTrending(self, limit: int) -> list:
+        return requests.get(self.BASE_URL + f"/trending?limit={limit}").json()
