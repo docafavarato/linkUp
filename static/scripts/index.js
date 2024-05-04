@@ -107,7 +107,6 @@ function loadToolTips() {
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 }
 
-
 $(document).ready(function () {
     loadToolTips();
     document.addEventListener('htmx:afterSwap', function (event) {
@@ -146,6 +145,8 @@ $(document).ready(function () {
         document.querySelector(".sourcePosts").classList.add("current");
     } else if (currentUrl.includes("/source%3Dprofile-liked")) {
         document.querySelector(".sourceLiked").classList.add("current");
+    } else if (currentUrl.includes("/source%3Dtrending")) {
+        document.querySelector(".sourceTrending").classList.add("current");
     }
 
     var realInput = document.getElementById("postImageFile");
