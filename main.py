@@ -14,6 +14,7 @@ from urllib.parse import unquote
 
 user_api = apiservice.Users()
 post_api = apiservice.Posts()
+tag_api = apiservice.Tags()
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
@@ -112,6 +113,12 @@ def create_post():
     imgFile = request.files.get("postImageFile")
     tags = request.form.getlist("tags")
 
+    if tags:
+        for tag in tags:
+            check_exists = requests.get(f"http://localhost:8080/tags/search?name={tag}").json()
+            if "error" in check_exists and check_exists["error"] == "Not found":
+                req = requests.post("http://localhost:8080/tags/insert", json={"name": tag})
+
     if title != "":
         if imgFile:
             random.seed(datetime.now().timestamp())
@@ -120,9 +127,12 @@ def create_post():
             if allowed_file(imgFile.filename):
                         imgFile.save(os.path.join(app.config["POST_IMAGE_UPLOAD_FOLDER"], finalName))
 
-            post_api.insert(session["user_id"], body={"title": title, "body": body, "tags": tags, "imgUrl": finalName})
+            
+            allTags = [tag_api.findByName(tag) for tag in tags]
+            post_api.insert(session["user_id"], body={"title": title, "body": body, "tags": allTags, "imgUrl": finalName})
         else:
-            post_api.insert(session["user_id"], body={"title": title, "body": body, "tags": tags})
+            allTags = [tag_api.findByName(tag) for tag in tags]
+            post_api.insert(session["user_id"], body={"title": title, "body": body, "tags": allTags})
 
         return get_post_template()
 
