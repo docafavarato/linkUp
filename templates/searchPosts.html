@@ -121,7 +121,7 @@
                 {% if post.tags %}
                 <div class="postTags">
                     {% for tag in post.tags %}
-                    <a href="{{ url_for('search_posts', tag=tag) }}" class="btn btn-outline-primary postTag">{{ tag
+                    <a href="{{ url_for('search_posts', tag=tag.name) }}" class="btn btn-outline-primary postTag">{{ tag.name
                         }}</a>
                     {% endfor %}
                 </div>
