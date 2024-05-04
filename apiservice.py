@@ -85,3 +85,16 @@ class Posts():
 
     def delete(self, post_id: str) -> None:
         req = requests.delete(self.BASE_URL + f"/{post_id}")
+
+class Tags:
+    def __init__(self):
+        self.BASE_URL = "http://localhost:8080/tags"
+        
+    def findAll(self) -> dict:
+        return requests.get(self.BASE_URL).json()
+    
+    def findById(self, id: str) -> dict:
+        return requests.get(self.BASE_URL + f"/{id}").json()
+    
+    def findByName(self, name: str) -> dict:
+        return requests.get(self.BASE_URL + f"/search?name={name}").json()
