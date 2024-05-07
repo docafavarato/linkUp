@@ -118,10 +118,9 @@ def create_post():
 
     if tags:
         for tag in tags:
-            check_exists = requests.get(f"http://localhost:8080/tags/search?name={tag}").json()
+            check_exists = tag_api.findByName(tag) 
             if "error" in check_exists and check_exists["error"] == "Not found":
-                req = requests.post("http://localhost:8080/tags/insert", json={"name": tag})
-
+                tag_api.insert(body={"name": tag})
     if title != "":
         if imgFile:
             random.seed(datetime.now().timestamp())
@@ -427,6 +426,8 @@ def editProfile():
 def viewProfile(userId, source):
     user = user_api.findById(session["user_id"])
     userProfile = user_api.findById(userId)
+    followedUsers = [user["name"] for user in user_api.getFollowers(userId)]
+    followingUsers = [user["name"] for user in user_api.getFollowing(userId)]
     posts = user_api.findPostsByUserId(userId, order_by_date=True)
     match source:
         case "profile-posts":
@@ -436,7 +437,8 @@ def viewProfile(userId, source):
 
     if request.method == "GET":
         return render_template("profileDetails.html", userProfile=userProfile,
-                               user=user, posts=posts, path_contains=path_contains)
+                               user=user, posts=posts, path_contains=path_contains, followedUsers=followedUsers,
+                               followingUsers=followingUsers)
     elif request.method == "POST":
         if "searchForm" in request.form:
             option = request.form.get("flexRadioDefault")
