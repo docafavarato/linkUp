@@ -46,6 +46,12 @@ class Users:
     def getLikedPosts(self, user_id: str) -> list:
         return requests.get(self.BASE_URL + f"/{user_id}/likedPosts").json()
     
+    def getFollowers(self, user_id: str) -> list:
+        return requests.get(self.BASE_URL + f"/{user_id}/followers").json()
+    
+    def getFollowing(self, user_id: str) -> list:
+        return requests.get(self.BASE_URL + f"/{user_id}/following").json()
+    
     def insert(self, body: dict) -> None:
         req = requests.post(self.BASE_URL + "/insert", json=body)
 
