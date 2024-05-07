@@ -101,3 +101,6 @@ class Tags:
     
     def findTrending(self, limit: int) -> list:
         return requests.get(self.BASE_URL + f"/trending?limit={limit}").json()
+    
+    def insert(self, body: dict) -> None:
+        requests.post(self.BASE_URL + "/insert", json=body)
