@@ -109,9 +109,10 @@ function loadToolTips() {
 
 $(document).ready(function () {
     loadToolTips();
-    document.addEventListener('htmx:afterSwap', function (event) {
-        loadToolTips();
-    });
+});
+
+document.addEventListener('htmx:afterSwap', function (event) {
+    loadToolTips();
 });
 
 $("#fileInput").change(function () {

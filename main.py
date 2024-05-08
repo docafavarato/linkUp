@@ -58,7 +58,9 @@ def get_posts_template(source="all"):
 def get_user_profile_template(otherId):
     user = user_api.findById(session["user_id"])
     userProfile = user_api.findById(otherId)
-    return render_template("base-user-profile.html", user=user, userProfile=userProfile)
+    followedUsers = [user["name"] for user in user_api.getFollowers(otherId)]
+    followingUsers = [user["name"] for user in user_api.getFollowing(otherId)]
+    return render_template("base-user-profile.html", user=user, userProfile=userProfile, followedUsers=followedUsers, followingUsers=followingUsers)
 
 def get_user_profile_search_template(query):
     user = user_api.findById(session["user_id"])
