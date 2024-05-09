@@ -73,7 +73,7 @@ def get_posts_search_template(query=None, tag=None):
         posts = post_api.findByFullSearch(query)
     elif tag:
         posts = post_api.findByTag(tag)
-    return render_template("base-posts-search.html", posts=posts, user=user, query=query, tag=tag)
+    return render_template("base-posts-search.html", posts=posts, user=user, query=query, tag=tag, path_contains=path_contains)
 
 @app.route("/")
 @login_required
@@ -196,6 +196,27 @@ def delete_comment(post_id, comment_id, source, user_profile_id=None, query=None
             elif tag:
                 return get_posts_search_template(tag=tag)
 
+@app.route("/handle-comment-like/<action>/<comment_id>/source=<source>")
+@app.route("/handle-comment-like/<action>/<comment_id>/<user_profile_id>/source=<source>")
+@app.route("/handle-comment-like/<action>/<comment_id>/query=<query>/source=<source>")
+@app.route("/handle-comment-like/<action>/<comment_id>/tag=<tag>/source=<source>")
+def handle_comment_like(action, comment_id, source, user_profile_id=None, query=None, tag=None):
+    match action:
+        case "like":
+            user_api.likeComment(session["user_id"], comment_id)
+        case "unlike":
+            user_api.unlikeComment(session["user_id"], comment_id)
+            
+    match source:
+        case "all" | "following":
+            return get_posts_template(source)
+        case "profile-posts" | "profile-liked":
+            return get_posts_by_user_id_template(user_profile_id, source)
+        case "postSearch":
+            if query:
+                return get_posts_search_template(query=query)
+            elif tag:
+                return get_posts_search_template(tag=tag)
 
 @app.route("/handle-like/<action>/<post_id>/source=<source>")
 @app.route("/handle-like/<action>/<post_id>/<user_profile_id>/source=<source>")
@@ -298,7 +319,7 @@ def search_posts(query=None, tag=None):
             posts = post_api.findByFullSearch(query)
         elif tag:
             posts = post_api.findByTag(tag)
-        return render_template("searchPosts.html", posts=posts, user=user, query=query, tag=tag)
+        return render_template("searchPosts.html", posts=posts, user=user, query=query, tag=tag, path_contains=path_contains)
     elif request.method == "POST":
         if "searchForm" in request.form:
             option = request.form.get("flexRadioDefault")
