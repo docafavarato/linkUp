@@ -25,9 +25,15 @@ class Users:
     def like(self, user_id: str, post_id: str) -> None:
         req = requests.get(self.BASE_URL + f"/{user_id}/like?postId={post_id}")
 
-    def unlike(self, user_id: str, post_id: str) -> None:
+    def unlike(self, user_id: str, post_id: str) -> None:    
         req = requests.get(self.BASE_URL + f"/{user_id}/unlike?postId={post_id}")
 
+    def likeComment(self, user_id: str, comment_id: str) -> None:
+        requests.get(self.BASE_URL + f"/{user_id}/likeComment?commentId={comment_id}")
+        
+    def unlikeComment(self, user_id: str, comment_id: str) -> None:
+        requests.get(self.BASE_URL + f"/{user_id}/unlikeComment?commentId={comment_id}")
+    
     def follow(self, user_id: str, other_id: str) -> None:
         req = requests.get(self.BASE_URL + f"/{user_id}/follow?userId={other_id}")
 
