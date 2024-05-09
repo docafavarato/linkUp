@@ -213,8 +213,39 @@
                         </div>
                         {% endif %}
                 </div>
-                <div class="postCommentContent">
+                <div class="postCommentContent" style="display: flex; flex-direction: column;">
                     <span class="postCommentBody">{{ comment['body'] }}</span>
+                    <div class="postCommentFooter">
+                        {% if comment.id in user.likedCommentsId %}
+                            <a href="" hx-get="
+                            {% if path_contains('profile-posts') %}
+                                {{ url_for('handle_comment_like', action='unlike', comment_id=comment.id, source='profile-posts', user_profile_id=post.author.id) }}
+                            {% elif path_contains('profile-liked') %}
+                                {{ url_for('handle_comment_like', action='unlike', comment_id=comment.id, source='profile-liked', user_profile_id=post.author.id) }}
+                            {% endif %}
+                            " hx-target=".containerProfilePosts"
+                             hx-swap="innerHTML" hx-trigger="click">Unlike</a>
+                        {% else %}
+                            <a href="" hx-get="
+                            {% if path_contains('profile-posts') %}
+                                {{ url_for('handle_comment_like', action='like', comment_id=comment.id, source='profile-posts', user_profile_id=post.author.id) }}
+                            {% elif path_contains('profile-liked') %}
+                                {{ url_for('handle_comment_like', action='like', comment_id=comment.id, source='profile-liked', user_profile_id=post.author.id) }}
+                            {% endif %}
+                            "
+                             hx-target=".containerProfilePosts"
+                             hx-swap="innerHTML" hx-trigger="click">Like</a>
+                        {% endif %}
+                        {% if comment.usersThatLiked %}
+                            <span class="likeAmount tool" data-bs-toggle="tooltip" data-bs-placement="top"
+                                data-bs-html="true"
+                                data-bs-title="{% for user in comment.usersThatLiked %} {{ user.name }}<br>{% endfor %}">
+                                {% if comment.usersThatLiked|length > 1 %}
+                                    {{ comment.usersThatLiked|length }} likes
+                                {% elif comment.usersThatLiked|length < 1 %} {{ comment.usersThatLiked|length }}
+                                    likes {% else %} 1 like {% endif %} </span>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             {% endfor %}

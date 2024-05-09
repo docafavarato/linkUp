@@ -12,7 +12,7 @@
 {% endif %}
 <div class="followInfo">
     <span style="margin-right: .5rem;" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-    data-bs-title="{% for user in followedUsers %}{{ user }}<br>{% endfor %}"><b>{{ userProfile['followersId']|length }}</b> followers</span>
+    data-bs-title="{% for user in followedUsers %} {{ user }}<br>{% endfor %}"><b>{{ userProfile['followersId']|length }}</b> followers</span>
     <span data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-    data-bs-title="{% for user in followingUsers %}{{ user }}<br>{% endfor %}"><b>{{ userProfile['followingId']|length }}</b> following</span>
+    data-bs-title="{% for user in followingUsers %} {{ user }}<br>{% endfor %}"><b>{{ userProfile['followingId']|length }}</b> following</span>
 </div>
