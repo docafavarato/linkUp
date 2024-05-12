@@ -76,6 +76,7 @@ def get_posts_search_template(query=None, tag=None):
     return render_template("base-posts-search.html", posts=posts, user=user, query=query, tag=tag, path_contains=path_contains)
 
 @app.route("/")
+@app.route("/linkup")
 @login_required
 def linkup():
     return redirect(url_for("index", source="all"))
@@ -472,6 +473,10 @@ def viewProfile(userId, source):
                         return redirect(url_for("search_users", query=query))
                     case "posts":
                         return redirect(url_for("search_posts", query=query))
+                    
+@app.errorhandler(404)
+def page_not_found(error):
+    return apology("The requested URL was not found on the server (404)", go_back=url_for("index", source="all"))
 
 @app.template_filter('time_passed')
 def time_passed_filter(date_string):
