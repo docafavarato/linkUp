@@ -2,16 +2,35 @@
 
 {% block title %}Apology{% endblock %}
 
-{% block main %}
-    <div class="apology" style="margin-top: 20vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-        <div class="apology-header">
+{% block body %}
+<nav class="bg-light border navbar navbar-expand-md navbar-light fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" width="80">
+        </a>
+        <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+            data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+            <ul class="navbar-nav ms-auto mt-2">
+                <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+                <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid" style="width: 100%; display: flex; align-items: center; justify-content: center;">
+    <div class="apology" style="display: flex; flex-direction: column; align-items: center !important; justify-content: center !important; margin-top: 30vh">
+        <div class="apology-header" style="align-items: center; text-align: center;">
             <span class="apology-title">We are sorry, but..</span>
         </div>
-        <div class="apology-body">
+        <div class="apology-body" style="text-align: center;">
             <span class="apology-content" style="font-size: 22px;"><b>{{ content }}</b></span>
         </div>
-        <div class="apology-footer" style="margin-top: 3rem">
+        <div class="apology-footer" style="margin-top: 2rem" style="display: flex; align-items: center; flex-direction: column; justify-content: center;">
             <a href="{{ go_back }}" class="btn btn-outline-primary apology-go-back">Go back</a>
         </div>
     </div>
+</div>
 {% endblock %}
