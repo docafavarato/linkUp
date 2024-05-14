@@ -111,6 +111,7 @@ $(document).ready(function () {
     loadToolTips();
 });
 
+
 document.addEventListener('htmx:afterSwap', function (event) {
     loadToolTips();
 });
